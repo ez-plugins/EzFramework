@@ -41,8 +41,8 @@ jobs:
           name: Unit tests
           path: |
             **/target/surefire-reports/TEST-*.xml
-          reporter: junit
-          fail_on_error: false
+          reporter: github
+          fail-on-error: false
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload unit test reports artifact
@@ -89,8 +89,8 @@ jobs:
           name: Feature tests
           path: |
             **/target/surefire-reports/TEST-*.xml
-          reporter: junit
-          fail_on_error: false
+          reporter: github
+          fail-on-error: false
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload feature test reports artifact
