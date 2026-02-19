@@ -1,0 +1,37 @@
+name: Test Report
+
+on:
+  workflow_run:
+    workflows: ['CI']
+    types: [completed]
+
+permissions:
+  contents: read
+  actions: read
+  checks: write
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Publish unit test report
+        uses: dorny/test-reporter@v1
+        with:
+          artifact: unit-test-reports
+          name: Unit tests
+          path: '*.xml'
+          reporter: java-junit
+          fail-on-error: 'false'
+          fail-on-empty: 'false'
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish feature test report
+        uses: dorny/test-reporter@v1
+        with:
+          artifact: feature-test-reports
+          name: Feature tests
+          path: '*.xml'
+          reporter: java-junit
+          fail-on-error: 'false'
+          fail-on-empty: 'false'
+          token: ${{ secrets.GITHUB_TOKEN }}
