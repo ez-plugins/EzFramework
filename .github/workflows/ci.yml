@@ -41,7 +41,7 @@ jobs:
           name: Unit tests
           path: |
             **/target/surefire-reports/TEST-*.xml
-          reporter: github
+          reporter: java-junit
           fail-on-error: false
           token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -89,7 +89,7 @@ jobs:
           name: Feature tests
           path: |
             **/target/surefire-reports/TEST-*.xml
-          reporter: github
+          reporter: java-junit
           fail-on-error: false
           token: ${{ secrets.GITHUB_TOKEN }}
 
