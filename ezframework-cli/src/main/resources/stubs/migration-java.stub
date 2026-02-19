@@ -1,0 +1,30 @@
+package {{PACKAGE}};
+
+import com.skyblockexp.ezframework.storage.migration.Migration;
+import com.skyblockexp.ezframework.storage.migration.MigrationContext;
+
+public class {{CLASS}} implements Migration {
+    @Override
+    public String id() { return "{{ID}}"; }
+
+    @Override
+    public String description() { return "{{DESCRIPTION}}"; }
+
+    @Override
+    public com.skyblockexp.ezframework.storage.migration.MigrationType type() { return com.skyblockexp.ezframework.storage.migration.MigrationType.JAVA; }
+
+    @Override
+    public void apply(MigrationContext ctx) throws Exception {
+        // Implement migration logic here
+    }
+
+    @Override
+    public void rollback(MigrationContext ctx) throws Exception {
+        // Implement rollback logic here (optional)
+    }
+
+    @Override
+    public String provider() {
+        return ""; // set to provider name (e.g. "mysql") to target a specific provider
+    }
+}

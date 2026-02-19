@@ -1,0 +1,27 @@
+{{PACKAGE_LINE}}
+import com.skyblockexp.ezframework.storage.AbstractRepository;
+import com.skyblockexp.ezframework.storage.StorageProvider;
+
+public class {{CLASS}} extends AbstractRepository<MyEntity, String> {
+    public {{CLASS}}(StorageProvider provider) {
+        super(provider, "{{CLASS_LOWER}}/");
+    }
+
+    @Override
+    protected java.util.Map<String, Object> toMap(MyEntity entity) {
+        // TODO: implement
+        return java.util.Collections.emptyMap();
+    }
+
+    @Override
+    protected MyEntity fromMap(java.util.Map<String, Object> map) {
+        // TODO: implement
+        return null;
+    }
+
+    @Override
+    protected String extractId(MyEntity entity) {
+        // TODO: implement
+        return null;
+    }
+}

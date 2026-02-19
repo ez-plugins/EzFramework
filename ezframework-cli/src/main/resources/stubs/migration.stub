@@ -1,0 +1,9 @@
+
+-- Migration: {{NAME}}
+-- Description: {{DESCRIPTION}}
+
+-- SQL migration stub
+-- Add your SQL statements below
+
+-- Example:
+-- CREATE TABLE example (id INT PRIMARY KEY);

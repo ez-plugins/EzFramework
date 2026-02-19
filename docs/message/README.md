@@ -1,0 +1,11 @@
+# Messaging — EzFramework
+
+This section describes the framework's messaging abstractions and conventions: the message provider API, formatting conventions (MiniMessage-style markup), and Minecraft color codes.
+
+Recommended reading order:
+
+- [Message provider API and registration](message_provider.md)
+- [MiniMessage formatting & placeholders](mini_message.md)
+- [Minecraft color codes reference](color_codes.md)
+
+Use the messaging system to centralize user-facing text, support localization, and ensure consistent formatting across commands, managers, and storage responses.
