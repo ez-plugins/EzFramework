@@ -36,6 +36,7 @@ jobs:
         run: mvn -B -Dpaper.version=${{ matrix.paper-version }} -Dmockbukkit.artifactId=${{ matrix.mockbukkit-artifactId }} -Dmockbukkit.version=${{ matrix.mockbukkit-version }} test
 
       - name: Publish unit test results
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
         uses: dorny/test-reporter@v1
         with:
           name: Unit tests
@@ -84,6 +85,7 @@ jobs:
         run: mvn -B -Dpaper.version=${{ matrix.paper-version }} -Dmockbukkit.artifactId=${{ matrix.mockbukkit-artifactId }} -Dmockbukkit.version=${{ matrix.mockbukkit-version }} -Pfeature-tests -Dtest=*FeatureTest test
 
       - name: Publish feature test results
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
         uses: dorny/test-reporter@v1
         with:
           name: Feature tests
