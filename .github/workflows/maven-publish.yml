@@ -49,19 +49,21 @@ jobs:
           curl -o /dev/null -s -w "%{http_code}" -H "Authorization: Bearer $GITHUB_TOKEN" -I "$URL" || echo "000"
         }
 
-        MODULES=("ezframework-query" "ezframework-core" "ezframework-message-minimessage" "ezframework-cli" "storage-mysql")
-        ALL_OK=true
+        MODULES=("EzFramework" "ezframework-query" "ezframework-core" "ezframework-message-minimessage" "ezframework-cli" "storage-mysql")
+        ANY_EXISTS=false
         for MOD in "${MODULES[@]}"; do
           STATUS=$(check_artifact "$MOD")
-          if [ "$STATUS" != "200" ]; then
-            echo "module $MOD missing (status=$STATUS)"
-            ALL_OK=false
+          if [ "$STATUS" = "200" ]; then
+            echo "module $MOD exists (status=$STATUS)"
+            ANY_EXISTS=true
           else
-            echo "module $MOD exists"
+            echo "module $MOD missing (status=$STATUS)"
           fi
         done
 
-        if [ "$ALL_OK" = true ]; then
+        # If any artifact for this version already exists on GitHub Packages,
+        # skip deploy to avoid 422 Unprocessable Entity (cannot overwrite version).
+        if [ "$ANY_EXISTS" = true ]; then
           echo "status=200" >> $GITHUB_OUTPUT
         else
           echo "status=404" >> $GITHUB_OUTPUT

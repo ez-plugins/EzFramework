@@ -27,7 +27,7 @@
         <paper.version>1.21.11-R0.1-SNAPSHOT</paper.version>
         
         <github.owner>ez-plugins</github.owner>
-        <github.repository>ezframework</github.repository>
+        <github.repository>EzFramework</github.repository>
     </properties>
 
     <profiles>
