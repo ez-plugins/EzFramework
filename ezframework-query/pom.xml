@@ -14,11 +14,7 @@
     <name>EzFramework - Query Builder</name>
 
     <dependencies>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
+        <!-- Use Paper API (provided) for compilation and tests; remove direct spigot-api to avoid classpath conflicts with MockBukkit -->
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -39,6 +35,14 @@
             <version>${mockbukkit.version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- Paper API for MockBukkit compatibility in feature tests -->
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>${paper.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Kyori dependencies are provided transitively by MockBukkit; remove explicit pins here -->
     </dependencies>
 
     <build>
