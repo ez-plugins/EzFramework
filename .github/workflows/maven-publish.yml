@@ -73,7 +73,7 @@ jobs:
 
     - name: Publish to GitHub Packages Apache Maven
       if: steps.check_package.outputs.status != '200'
-      run: mvn -B -DskipTests deploy -s $GITHUB_WORKSPACE/settings.xml
+      run: mvn -X -e -B -DskipTests deploy -s $GITHUB_WORKSPACE/settings.xml
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
