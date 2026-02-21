@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.skyblockexp</groupId>
     <artifactId>EzFramework</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.2</version>
     <packaging>pom</packaging>
     <name>EzFramework</name>
     <description>EzFramework multi-module parent POM</description>
@@ -27,7 +27,7 @@
         <paper.version>1.21.11-R0.1-SNAPSHOT</paper.version>
         
         <github.owner>ez-plugins</github.owner>
-        <github.repository>ezframework</github.repository>
+        <github.repository>EzFramework</github.repository>
     </properties>
 
     <profiles>
