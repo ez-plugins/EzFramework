@@ -4,6 +4,11 @@ on:
   pull_request:
     branches: [ main, master ]
 
+permissions:
+  contents: read
+  actions: read
+  checks: write
+
 jobs:
   unit-tests:
     runs-on: ubuntu-latest
@@ -18,11 +23,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '21'
 
       - name: Cache Maven local repository
         uses: actions/cache@v4
@@ -36,13 +41,14 @@ jobs:
         run: mvn -B -Dpaper.version=${{ matrix.paper-version }} -Dmockbukkit.artifactId=${{ matrix.mockbukkit-artifactId }} -Dmockbukkit.version=${{ matrix.mockbukkit-version }} test
 
       - name: Publish unit test results
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
         uses: dorny/test-reporter@v1
         with:
           name: Unit tests
           path: |
             **/target/surefire-reports/TEST-*.xml
-          reporter: junit
-          fail_on_error: false
+          reporter: java-junit
+          fail-on-error: false
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload unit test reports artifact
@@ -66,11 +72,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '21'
 
       - name: Cache Maven local repository
         uses: actions/cache@v4
@@ -84,13 +90,14 @@ jobs:
         run: mvn -B -Dpaper.version=${{ matrix.paper-version }} -Dmockbukkit.artifactId=${{ matrix.mockbukkit-artifactId }} -Dmockbukkit.version=${{ matrix.mockbukkit-version }} -Pfeature-tests -Dtest=*FeatureTest test
 
       - name: Publish feature test results
+        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
         uses: dorny/test-reporter@v1
         with:
           name: Feature tests
           path: |
             **/target/surefire-reports/TEST-*.xml
-          reporter: junit
-          fail_on_error: false
+          reporter: java-junit
+          fail-on-error: false
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload feature test reports artifact
