@@ -5,12 +5,13 @@
 
     <parent>
         <groupId>com.skyblockexp</groupId>
-        <artifactId>EzFramework</artifactId>
-        <version>0.1.4</version>
+        <artifactId>ezframework</artifactId>
+        <version>0.1.5</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>ezframework-core</artifactId>
+    <version>${module.core.version}</version>
     <name>EzFramework - Core</name>
 
     <dependencies>
@@ -43,7 +44,7 @@
         <dependency>
             <groupId>com.skyblockexp</groupId>
             <artifactId>ezframework-query</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${module.query.version}</version>
         </dependency>
     </dependencies>
 
