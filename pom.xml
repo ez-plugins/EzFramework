@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.skyblockexp</groupId>
     <artifactId>EzFramework</artifactId>
-    <version>0.1.2</version>
+    <version>0.1.3</version>
     <packaging>pom</packaging>
     <name>EzFramework</name>
     <description>EzFramework multi-module parent POM</description>
