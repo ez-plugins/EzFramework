@@ -29,7 +29,7 @@
         <paper.version>1.21.11-R0.1-SNAPSHOT</paper.version>
         
         <github.owner>ez-plugins</github.owner>
-        <github.repository>EzFramework</github.repository>
+        <github.repository>ezframework</github.repository>
         
         <!-- Module-specific versions (controlled centrally) -->
         <module.query.version>0.1.5</module.query.version>
