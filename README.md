@@ -1,5 +1,7 @@
 # EzFramework
 
+[![CI](https://github.com/ez-plugins/EzFramework/actions/workflows/maven-publish.yml/badge.svg)](https://github.com/ez-plugins/EzFramework/actions) [![Release](https://img.shields.io/github/v/release/ez-plugins/EzFramework?label=release)](https://github.com/ez-plugins/EzFramework/releases) [![Issues](https://img.shields.io/github/issues/ez-plugins/EzFramework)](https://github.com/ez-plugins/EzFramework/issues) [![License](https://img.shields.io/github/license/ez-plugins/EzFramework)](https://github.com/ez-plugins/EzFramework#license)
+
 Lightweight Java framework utilities to simplify Bukkit/Spigot plugin development.
 
 - Name: EzFramework
