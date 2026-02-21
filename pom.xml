@@ -3,8 +3,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.skyblockexp</groupId>
-    <artifactId>EzFramework</artifactId>
-    <version>0.1.4</version>
+    <artifactId>ezframework</artifactId>
+    <version>${project.version}</version>
     <packaging>pom</packaging>
     <name>EzFramework</name>
     <description>EzFramework multi-module parent POM</description>
@@ -18,6 +18,8 @@
     </modules>
 
     <properties>
+        <!-- Root project version controlled by property -->
+        <project.version>0.1.5</project.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -28,6 +30,13 @@
         
         <github.owner>ez-plugins</github.owner>
         <github.repository>EzFramework</github.repository>
+        
+        <!-- Module-specific versions (controlled centrally) -->
+        <module.query.version>0.1.5</module.query.version>
+        <module.core.version>0.1.5</module.core.version>
+        <module.message.version>0.1.5</module.message.version>
+        <module.cli.version>0.1.5</module.cli.version>
+        <module.storage.version>0.1.5</module.storage.version>
     </properties>
 
     <profiles>

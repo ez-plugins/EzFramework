@@ -4,12 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.skyblockexp</groupId>
-        <artifactId>EzFramework</artifactId>
-        <version>0.1.4</version>
+        <artifactId>ezframework</artifactId>
+        <version>0.1.5</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>storage-mysql</artifactId>
+    <version>${module.storage.version}</version>
     <name>EzFramework - Storage MySQL Provider</name>
     <description>MySQL storage provider for EzFramework</description>
 
@@ -17,12 +18,12 @@
         <dependency>
             <groupId>com.skyblockexp</groupId>
             <artifactId>ezframework-core</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${module.core.version}</version>
         </dependency>
         <dependency>
             <groupId>com.skyblockexp</groupId>
             <artifactId>ezframework-query</artifactId>
-            <version>${project.parent.version}</version>
+            <version>${module.query.version}</version>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>

@@ -5,12 +5,13 @@
 
     <parent>
         <groupId>com.skyblockexp</groupId>
-        <artifactId>EzFramework</artifactId>
-        <version>0.1.4</version>
+        <artifactId>ezframework</artifactId>
+        <version>0.1.5</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>ezframework-query</artifactId>
+    <version>${module.query.version}</version>
     <name>EzFramework - Query Builder</name>
 
     <dependencies>

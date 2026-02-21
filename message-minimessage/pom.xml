@@ -5,12 +5,13 @@
 
     <parent>
         <groupId>com.skyblockexp</groupId>
-        <artifactId>EzFramework</artifactId>
-        <version>0.1.4</version>
+        <artifactId>ezframework</artifactId>
+        <version>0.1.5</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>ezframework-message-minimessage</artifactId>
+    <version>${module.message.version}</version>
     <name>EzFramework - Message MiniMessage</name>
 
     <dependencies>
@@ -23,7 +24,7 @@
         <dependency>
             <groupId>com.skyblockexp</groupId>
             <artifactId>ezframework-core</artifactId>
-            <version>0.1.4</version>
+            <version>${module.core.version}</version>
         </dependency>
         <!-- Adventure / MiniMessage (compile-time) -->
         <dependency>
