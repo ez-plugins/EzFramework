@@ -1,0 +1,17 @@
+com.skyblockexp.ezframework
+com.skyblockexp.ezframework.bootstrap
+com.skyblockexp.ezframework.bootstrap.component
+com.skyblockexp.ezframework.cli
+com.skyblockexp.ezframework.cli.generator
+com.skyblockexp.ezframework.command
+com.skyblockexp.ezframework.gui.api
+com.skyblockexp.ezframework.gui.impl
+com.skyblockexp.ezframework.message.api
+com.skyblockexp.ezframework.message.minimessage
+com.skyblockexp.ezframework.query
+com.skyblockexp.ezframework.storage
+com.skyblockexp.ezframework.storage.migration
+com.skyblockexp.ezframework.storage.model
+com.skyblockexp.ezframework.storage.provider
+com.skyblockexp.ezframework.storage.provider.mysql
+com.skyblockexp.ezframework.storage.sql
