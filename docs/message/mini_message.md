@@ -2,6 +2,8 @@
 
 EzFramework is compatible with markup-style message formatting (commonly known as MiniMessage) and placeholder substitution. Use structured markup to express colors, styles and simple placeholders while keeping message source files readable.
 
+Note: prefer using the bundled provider `com.skyblockexp.ezframework.message.minimessage.MiniMessageProvider` (in the `message-minimessage` module) rather than invoking `MiniMessage` directly. Register and initialize the provider with `Messaging.forPlugin(plugin)` so the framework handles integration with `BukkitAudiences`.
+
 Common features
 
 - Tags for color and style: `<green>`, `<red>`, `<bold>`, etc.

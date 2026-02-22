@@ -55,20 +55,23 @@ String filled = template.replace("{player}", player.getName());
 Messaging.forPlugin(this).send(player, filled);
 ```
 
-2) Use the bundled `MiniMessageProvider` (auto-detected) or explicitly register it
+2) Use the bundled `message-minimessage` provider (recommended)
+
+If you include the `message-minimessage` module on your plugin's classpath the framework will auto-detect and use it. To explicitly register and initialize the provider yourself:
 
 ```java
-// If message-minimessage module is on the classpath, Messaging.forPlugin(plugin)
-// will attempt to auto-instantiate MiniMessageProvider. To register explicitly:
-Messaging.forPlugin(this).registerProvider(new com.skyblockexp.ezframework.message.minimessage.MiniMessageProvider());
+com.skyblockexp.ezframework.message.minimessage.MiniMessageProvider mm = new com.skyblockexp.ezframework.message.minimessage.MiniMessageProvider();
+mm.init(this); // optional, calls the provider init hook with your plugin
+Messaging.forPlugin(this).registerProvider(mm);
 
 // Then usage is identical:
 Messaging.forPlugin(this).send(player, "<green>Welcome, <player>!");
 ```
 
+
 3) Full TagResolver support via a custom provider
 
-If you need to inject complex components (hover/click events or component placeholders), implement a custom `MessageProvider` that uses `MiniMessage` with `TagResolver` and register it via `Messaging.forPlugin(plugin).registerProvider(myProvider)`.
+If you need to inject complex components (hover/click events or component placeholders), implement a custom `MessageProvider` that uses Kyori Adventure's MiniMessage/TagResolver internally and register it via `Messaging.forPlugin(plugin).registerProvider(myProvider)`.
 
 Notes on lifecycle
 
