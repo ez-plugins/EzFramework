@@ -69,31 +69,62 @@ public final class Messaging {
 
         this.provider = p;
     }
-
+    /**
+     * Obtain the messaging instance for a plugin.
+     * @param plugin host plugin
+     * @return messaging manager for the plugin
+     */
     public static Messaging forPlugin(JavaPlugin plugin) {
         return INSTANCES.computeIfAbsent(plugin, Messaging::new);
     }
 
+    /**
+     * Get the currently registered message provider.
+     *
+     * @return currently registered provider
+     */
     public MessageProvider getProvider() {
         return provider;
     }
 
+    /**
+     * Register or replace the message provider.
+     * @param provider provider to register
+     */
     public void registerProvider(MessageProvider provider) {
         this.provider = Objects.requireNonNull(provider, "provider");
     }
 
+    /**
+     * Set provider prefix.
+     * @param prefix prefix text (may be null)
+     */
     public void setPrefix(String prefix) {
         provider.setPrefix(prefix);
     }
 
+    /**
+     * Format a message using the configured provider.
+     * @param message raw message
+     * @return formatted message
+     */
     public String format(String message) {
         return provider.format(message);
     }
 
+    /**
+     * Send a message to a command sender.
+     * @param to recipient
+     * @param message message text
+     */
     public void send(CommandSender to, String message) {
         provider.send(to, message);
     }
 
+    /**
+     * Broadcast a message to all players.
+     * @param message message text
+     */
     public void broadcast(String message) {
         provider.broadcast(message);
     }

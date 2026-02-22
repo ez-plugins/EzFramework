@@ -22,6 +22,14 @@ public abstract class EzCmd implements org.bukkit.command.CommandExecutor, TabCo
     private final String commandName;
     private final List<Subcommand> subcommands;
 
+    /**
+     * Construct an EzCmd and register it with the provided plugin's command
+     * system if the command name is defined in `plugin.yml`.
+     *
+     * @param plugin the JavaPlugin instance
+     * @param commandName the command name to register
+     * @param subcommands optional list of subcommands
+     */
     protected EzCmd(JavaPlugin plugin, String commandName, List<Subcommand> subcommands) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         this.commandName = Objects.requireNonNull(commandName, "commandName");
@@ -39,6 +47,11 @@ public abstract class EzCmd implements org.bukkit.command.CommandExecutor, TabCo
         }
     }
 
+    /**
+     * Get the configured subcommands for this command.
+     *
+     * @return unmodifiable list of subcommands
+     */
     protected List<Subcommand> getSubcommands() {
         return Collections.unmodifiableList(subcommands);
     }
@@ -104,6 +117,11 @@ public abstract class EzCmd implements org.bukkit.command.CommandExecutor, TabCo
         }
     }
 
+    /**
+     * Build a usage string for the command based on registered subcommands.
+     *
+     * @return usage string (e.g. {@code "/cmd <sub1|sub2>"})
+     */
     public String usage() {
         String subs = subcommands.stream().map(Subcommand::getName).collect(Collectors.joining("|"));
         return "/" + commandName + " <" + (subs.isEmpty() ? "..." : subs) + ">";
@@ -111,8 +129,10 @@ public abstract class EzCmd implements org.bukkit.command.CommandExecutor, TabCo
 
     /**
      * Convenience builder entry point for quick command construction.
-     * Preferred primary usage is to extend `EzCmd`, but this builder is useful
-     * for small or example commands.
+     *
+     * @param plugin the plugin instance
+     * @param commandName the command name to build
+     * @return a new {@link CommandBuilder}
      */
     public static CommandBuilder builder(JavaPlugin plugin, String commandName) {
         return new CommandBuilder(plugin, commandName);

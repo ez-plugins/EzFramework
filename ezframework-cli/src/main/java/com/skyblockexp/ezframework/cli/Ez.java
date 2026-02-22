@@ -15,9 +15,23 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Command-line entrypoint for EzFramework helper utilities. Provides subcommands
+ * to scaffold repositories, commands and migrations.
+ */
 @Command(name = "ez", mixinStandardHelpOptions = true, description = "EzFramework helper CLI", subcommands = {Ez.MakeRepo.class, Ez.MakeCmd.class, Ez.MakeMigration.class})
 public class Ez implements Callable<Integer> {
 
+    /**
+     * Public no-arg constructor for CLI instantiation.
+     */
+    public Ez() {}
+
+    /**
+     * Main entrypoint for the CLI.
+     *
+     * @param args command-line arguments
+     */
     public static void main(String[] args) {
         int exitCode = new CommandLine(new Ez()).execute(args);
         System.exit(exitCode);

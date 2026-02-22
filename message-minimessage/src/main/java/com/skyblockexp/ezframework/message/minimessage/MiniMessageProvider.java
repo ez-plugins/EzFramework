@@ -18,6 +18,11 @@ public class MiniMessageProvider implements MessageProvider {
     // Use Object to avoid compile-time dependency on specific MiniMessage API
     private volatile Object miniMessage;
 
+    /**
+     * Public no-arg constructor for provider instantiation.
+     */
+    public MiniMessageProvider() {}
+
     @Override
     public void init(JavaPlugin plugin) throws Exception {
         try {

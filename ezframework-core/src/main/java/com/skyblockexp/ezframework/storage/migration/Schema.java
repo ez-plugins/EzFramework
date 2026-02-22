@@ -16,37 +16,99 @@ public final class Schema {
         this.tableName = tableName;
     }
 
+    /**
+     * Create a new Schema builder for the given table name.
+     *
+     * @param tableName target table name
+     * @return schema builder
+     */
     public static Schema table(String tableName) {
         return new Schema(tableName);
     }
-
+    /**
+     * Add a default `id` primary key column.
+     *
+     * @return this schema builder
+     */
     public Schema id() { columns.add(new Column("id", "VARCHAR(255)", true, true, false, null)); return this; }
 
+    /**
+     * Add a VARCHAR column.
+     *
+     * @param name column name
+     * @param length varchar length
+     * @param notNull whether the column is NOT NULL
+     * @return this schema builder
+     */
     public Schema string(String name, int length, boolean notNull) {
         columns.add(new Column(name, "VARCHAR(" + length + ")", notNull, false, false, null));
         return this;
     }
 
+    /**
+     * Add an INT column.
+     *
+     * @param name column name
+     * @param notNull whether the column is NOT NULL
+     * @return this schema builder
+     */
     public Schema integer(String name, boolean notNull) {
         columns.add(new Column(name, "INT", notNull, false, false, null));
         return this;
     }
 
+    /**
+     * Add a TEXT column.
+     *
+     * @param name column name
+     * @param notNull whether the column is NOT NULL
+     * @return this schema builder
+     */
     public Schema text(String name, boolean notNull) {
         columns.add(new Column(name, "TEXT", notNull, false, false, null));
         return this;
     }
 
+    /**
+     * Add a binary LONGBLOB column.
+     *
+     * @param name column name
+     * @return this schema builder
+     */
     public Schema binary(String name) { columns.add(new Column(name, "LONGBLOB", false, false, false, null)); return this; }
 
+    /**
+     * Add a boolean-like TINYINT(1) column.
+     *
+     * @param name column name
+     * @param notNull whether the column is NOT NULL
+     * @return this schema builder
+     */
     public Schema bool(String name, boolean notNull) { columns.add(new Column(name, "TINYINT(1)", notNull, false, false, null)); return this; }
 
+    /**
+     * Build a CREATE TABLE SQL statement using the default dialect (MySQL).
+     *
+     * @return CREATE TABLE SQL
+     */
     public String toCreateSql() {
         return toCreateSql(Dialect.MYSQL);
     }
 
-    public enum Dialect { MYSQL, H2 }
+    /** Dialect selection for generated SQL. */
+    public enum Dialect {
+        /** MySQL dialect. */
+        MYSQL,
+        /** H2 in-memory/embedded dialect. */
+        H2
+    }
 
+    /**
+     * Build CREATE TABLE SQL for the given dialect.
+     *
+     * @param dialect target SQL dialect
+     * @return CREATE TABLE statement
+     */
     public String toCreateSql(Dialect dialect) {
         StringJoiner join = new StringJoiner(", ");
         String pk = null;

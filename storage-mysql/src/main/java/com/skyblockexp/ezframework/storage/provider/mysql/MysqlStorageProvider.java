@@ -44,9 +44,19 @@ public class MysqlStorageProvider implements StorageProvider, MigrationCapable, 
     private String userOverride;
     private String passwordOverride;
 
+    /**
+     * Public no-arg constructor. The provider will read connection parameters
+     * from the plugin config when {@link #init(org.bukkit.plugin.java.JavaPlugin)} is called.
+     */
     public MysqlStorageProvider() {}
 
     // Test helper constructor: supply an existing Connection (e.g. H2 in-memory)
+    /**
+     * Construct a provider bound to an existing {@link Connection}. Useful for
+     * testing with in-memory databases.
+     *
+     * @param connection pre-established JDBC connection
+     */
     public MysqlStorageProvider(Connection connection) {
         this.conn = connection;
     }
@@ -54,6 +64,9 @@ public class MysqlStorageProvider implements StorageProvider, MigrationCapable, 
     /**
      * Set the MySQL host to use when `init` is called. If not set, the plugin
      * config value `mysql.host` will be used.
+     *
+     * @param host host name or IP
+     * @return this provider for chaining
      */
     public MysqlStorageProvider setHost(String host) {
         this.hostOverride = host;
@@ -63,25 +76,43 @@ public class MysqlStorageProvider implements StorageProvider, MigrationCapable, 
     /**
      * Set the MySQL port to use when `init` is called. If not set, the plugin
      * config value `mysql.port` will be used.
+     *
+     * @param port TCP port number
+     * @return this provider for chaining
      */
     public MysqlStorageProvider setPort(int port) {
         this.portOverride = port;
         return this;
     }
 
-    /** Set the database name to use; overrides `mysql.database` config. */
+    /**
+     * Set the database name to use; overrides `mysql.database` config.
+     *
+     * @param database database name
+     * @return this provider for chaining
+     */
     public MysqlStorageProvider setDatabase(String database) {
         this.databaseOverride = database;
         return this;
     }
 
-    /** Set the DB user to use; overrides `mysql.user` config. */
+    /**
+     * Set the DB user to use; overrides `mysql.user` config.
+     *
+     * @param user username
+     * @return this provider for chaining
+     */
     public MysqlStorageProvider setUser(String user) {
         this.userOverride = user;
         return this;
     }
 
-    /** Set the DB password to use; overrides `mysql.password` config. */
+    /**
+     * Set the DB password to use; overrides `mysql.password` config.
+     *
+     * @param password password (may be empty)
+     * @return this provider for chaining
+     */
     public MysqlStorageProvider setPassword(String password) {
         this.passwordOverride = password;
         return this;
@@ -90,6 +121,9 @@ public class MysqlStorageProvider implements StorageProvider, MigrationCapable, 
     /**
      * Optionally set the underlying table name used for storage. Default:
      * `ezframework_storage`.
+     *
+     * @param table table name
+     * @return this provider for chaining
      */
     public MysqlStorageProvider setTable(String table) {
         if (table != null && !table.isEmpty()) this.table = table;

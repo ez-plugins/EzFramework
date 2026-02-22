@@ -2,18 +2,44 @@ package com.skyblockexp.ezframework.query;
 
 import java.util.Map;
 
+/**
+ * A single field condition used by {@link Query}.
+ */
 public class Condition {
     private final Operator op;
     private final Object value;
 
+    /**
+     * Create a condition.
+     * @param op operator
+     * @param value comparison value (may be null for some operators)
+     */
     public Condition(Operator op, Object value) {
         this.op = op;
         this.value = value;
     }
 
+    /**
+     * Return the operator for this condition.
+     *
+     * @return the operator
+     */
     public Operator getOperator() { return op; }
+
+    /**
+     * Return the comparison value for this condition.
+     *
+     * @return the value used for comparison (may be null)
+     */
     public Object getValue() { return value; }
 
+    /**
+     * Evaluate whether the given map's value for `key` satisfies this condition.
+     *
+     * @param map source attributes
+     * @param key field name to check
+     * @return true if the condition matches
+     */
     @SuppressWarnings("unchecked")
     public boolean matches(Map<String, Object> map, String key) {
         boolean exists = map.containsKey(key);

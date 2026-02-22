@@ -11,6 +11,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class RegistryBootstrap implements Component {
     private final JavaPlugin plugin;
 
+    /**
+     * Create a registry bootstrap component bound to the plugin.
+     *
+     * @param plugin host plugin
+     */
     public RegistryBootstrap(JavaPlugin plugin) {
         this.plugin = plugin;
     }

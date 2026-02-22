@@ -15,6 +15,13 @@ import java.util.Objects;
 public abstract class EzPlugin extends JavaPlugin {
     private final Bootstrap bootstrap = new Bootstrap(this);
 
+    /**
+     * Default constructor.
+     */
+    protected EzPlugin() {
+        super();
+    }
+
     @Override
     public final void onEnable() {
         List<Component> comps = components();
@@ -40,6 +47,10 @@ public abstract class EzPlugin extends JavaPlugin {
     protected abstract List<Component> components();
 
     /** Access the underlying {@link Bootstrap} instance. */
+    /**
+     * Access the underlying {@link Bootstrap} instance.
+     * @return bootstrap instance used to manage components
+     */
     protected final Bootstrap getBootstrap() {
         return bootstrap;
     }

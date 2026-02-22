@@ -34,6 +34,11 @@ public class BukkitGuiService implements GuiService, Listener {
     private JavaPlugin plugin;
     private final Map<Inventory, MenuDefinition> handlers = new ConcurrentHashMap<>();
 
+    /**
+     * Public no-arg constructor for BukkitGuiService.
+     */
+    public BukkitGuiService() {}
+
     @Override
     public void init(Object plugin) {
         if (plugin instanceof JavaPlugin) {
@@ -80,6 +85,12 @@ public class BukkitGuiService implements GuiService, Listener {
         return ItemConverter.toItemStack(item, menu, slot, this.plugin);
     }
 
+    /**
+     * Handle inventory click events and dispatch to the corresponding
+     * {@link MenuDefinition} click handlers or per-slot actions.
+     *
+     * @param event the inventory click event
+     */
     @EventHandler
     public void onClick(InventoryClickEvent event) {
         Inventory inv = event.getInventory();
@@ -129,6 +140,12 @@ public class BukkitGuiService implements GuiService, Listener {
         if (h != null) h.accept(new GuiClickContext(gp, slot, gi));
     }
 
+    /**
+     * Handle inventory close events and remove any associated handler
+     * registrations for the closed inventory.
+     *
+     * @param event the inventory close event
+     */
     @EventHandler
     public void onClose(InventoryCloseEvent event) {
         Inventory inv = event.getInventory();

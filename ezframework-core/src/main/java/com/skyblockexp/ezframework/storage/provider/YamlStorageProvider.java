@@ -24,6 +24,11 @@ public class YamlStorageProvider implements StorageProvider, QueryableStorage {
     private JavaPlugin plugin;
     private File baseDir;
 
+    /**
+     * Public no-arg constructor for provider instantiation.
+     */
+    public YamlStorageProvider() {}
+
     @Override
     public String name() {
         return "yaml";
@@ -51,6 +56,14 @@ public class YamlStorageProvider implements StorageProvider, QueryableStorage {
 
     @Override
     public void save(String path, Map<String, Object> data) throws Exception {
+
+            /**
+             * Initialize the provider with the plugin instance and create the base
+             * storage directory if necessary.
+             *
+             * @param plugin plugin instance used to determine data folder
+             * @throws Exception on initialization failure
+             */
         File file = fileFor(path);
         FileConfiguration cfg = new YamlConfiguration();
         for (Map.Entry<String, Object> e : data.entrySet()) {
@@ -100,5 +113,13 @@ public class YamlStorageProvider implements StorageProvider, QueryableStorage {
             if (q.getLimit() != null && out.size() >= q.getLimit()) break;
         }
         return out;
+
+            /**
+             * Query IDs by {@link Query} conditions by scanning YAML files.
+             *
+             * @param q query object with conditions/limits
+             * @return list of matching IDs
+             * @throws Exception on IO errors
+             */
     }
 }

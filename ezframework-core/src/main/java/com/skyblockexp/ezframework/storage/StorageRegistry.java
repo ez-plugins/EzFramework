@@ -16,19 +16,41 @@ public final class StorageRegistry {
 
     private StorageRegistry() {}
 
+    /**
+     * Register a {@link StorageProvider} under its {@link StorageProvider#name()}.
+     *
+     * @param provider provider to register (must not be null)
+     */
     public static void register(StorageProvider provider) {
         Objects.requireNonNull(provider, "provider");
         providers.put(provider.name(), provider);
     }
 
+    /**
+     * Lookup a registered provider by name.
+     *
+     * @param name provider name
+     * @return provider instance or null if not registered
+     */
     public static StorageProvider get(String name) {
         return providers.get(name);
     }
 
+    /**
+     * Get an unmodifiable view of all registered providers.
+     *
+     * @return map of provider name -> provider
+     */
     public static Map<String, StorageProvider> getAll() {
         return Collections.unmodifiableMap(providers);
     }
 
+    /**
+     * Initialize all registered providers with the given plugin context. This
+     * performs best-effort initialization and logs failures per-provider.
+     *
+     * @param plugin plugin instance passed to provider init
+     */
     public static void initAll(JavaPlugin plugin) {
         for (StorageProvider p : providers.values()) {
             try {
@@ -39,6 +61,9 @@ public final class StorageRegistry {
         }
     }
 
+    /**
+     * Close all registered providers (best-effort).
+     */
     public static void closeAll() {
         for (StorageProvider p : providers.values()) {
             try {

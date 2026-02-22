@@ -12,6 +12,11 @@ public final class GuiBootstrap implements Component {
     private final JavaPlugin plugin;
     private GuiManager manager;
 
+    /**
+     * Create a GUI bootstrap component bound to the host plugin.
+     *
+     * @param plugin host plugin
+     */
     public GuiBootstrap(JavaPlugin plugin) {
         this.plugin = plugin;
     }
