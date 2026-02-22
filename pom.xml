@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.skyblockexp</groupId>
     <artifactId>ezframework</artifactId>
-    <version>0.1.5</version>
+    <version>0.2.0</version>
     <packaging>pom</packaging>
     <name>EzFramework</name>
     <description>EzFramework multi-module parent POM</description>
@@ -21,7 +21,7 @@
 
     <properties>
         <!-- Root project version controlled by property -->
-        <project.version>0.1.5</project.version>
+        <project.version>0.2.0</project.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -34,7 +34,7 @@
         <github.repository>ezframework</github.repository>
         
         <!-- Module-specific versions (controlled centrally) -->
-        <revision>0.1.5</revision>
+        <revision>0.2.0</revision>
         <module.query.version>${revision}</module.query.version>
         <module.core.version>${revision}</module.core.version>
         <module.message.version>${revision}</module.message.version>
