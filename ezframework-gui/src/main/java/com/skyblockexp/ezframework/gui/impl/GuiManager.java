@@ -12,6 +12,11 @@ public class GuiManager extends Manager {
     private final JavaPlugin plugin;
     private final BukkitGuiService service;
 
+    /**
+     * Create a new GuiManager for the given plugin.
+     *
+     * @param plugin host plugin
+     */
     public GuiManager(JavaPlugin plugin) {
         this.plugin = plugin;
         this.service = new BukkitGuiService();
@@ -28,5 +33,10 @@ public class GuiManager extends Manager {
         // nothing to clean here for now; Bukkit event handlers are unregistered automatically on plugin disable
     }
 
+    /**
+     * Get the underlying {@link BukkitGuiService} instance.
+     *
+     * @return service implementation
+     */
     public BukkitGuiService getService() { return service; }
 }

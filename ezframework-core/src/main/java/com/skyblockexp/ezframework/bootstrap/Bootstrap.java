@@ -19,21 +19,40 @@ public final class Bootstrap {
     private final Logger logger;
     private final List<Component> components = new ArrayList<>();
 
+    /**
+     * Create a Bootstrap controller for the given plugin.
+     *
+     * @param plugin the plugin instance (must not be null)
+     */
     public Bootstrap(JavaPlugin plugin) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         this.logger = plugin.getLogger();
     }
 
+    /**
+     * Register a component for lifecycle management.
+     *
+     * @param component the component to register
+     * @return this Bootstrap instance for chaining
+     */
     public Bootstrap register(Component component) {
         Objects.requireNonNull(component, "component");
         components.add(component);
         return this;
     }
 
+    /**
+     * Retrieve the registered components in registration order.
+     *
+     * @return unmodifiable list of registered components
+     */
     public List<Component> getComponents() {
         return Collections.unmodifiableList(components);
     }
 
+    /**
+     * Start all registered components in registration order.
+     */
     public void startAll() {
         for (Component c : components) {
             try {
@@ -45,6 +64,9 @@ public final class Bootstrap {
         }
     }
 
+    /**
+     * Stop all registered components in reverse registration order.
+     */
     public void stopAll() {
         for (int i = components.size() - 1; i >= 0; i--) {
             Component c = components.get(i);
@@ -57,6 +79,9 @@ public final class Bootstrap {
         }
     }
 
+    /**
+     * Reload all registered components by calling their {@code reload()} hook.
+     */
     public void reloadAll() {
         for (Component c : components) {
             try {

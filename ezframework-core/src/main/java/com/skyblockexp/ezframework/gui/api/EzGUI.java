@@ -60,22 +60,49 @@ public final class EzGUI {
         this.provider = p;
     }
 
+    /**
+     * Return (or create) the registry associated with the given plugin.
+     *
+     * @param pluginContext plugin-specific context object (typically a plugin instance)
+     * @return the {@link EzGUI} instance for the given plugin context
+     */
     public static EzGUI forPlugin(Object pluginContext) {
         return INSTANCES.computeIfAbsent(pluginContext, EzGUI::new);
     }
 
+    /**
+     * Get the current {@link GuiService} provider in use.
+     *
+     * @return current {@link GuiService} provider (never null)
+     */
     public GuiService getProvider() {
         return provider;
     }
 
+    /**
+     * Register a custom {@link GuiService} provider for this plugin context.
+     *
+     * @param provider provider implementation to use
+     */
     public void registerProvider(GuiService provider) {
         this.provider = Objects.requireNonNull(provider, "provider");
     }
 
+    /**
+     * Open a menu for the given player using the configured provider.
+     *
+     * @param player player to open the menu for
+     * @param menu menu definition to open
+     */
     public void openMenu(GuiPlayer player, MenuDefinition menu) {
         provider.openMenu(player, menu);
     }
 
+    /**
+     * Close any open menu for the given player using the configured provider.
+     *
+     * @param player player whose menu should be closed
+     */
     public void closeMenu(GuiPlayer player) {
         provider.closeMenu(player);
     }

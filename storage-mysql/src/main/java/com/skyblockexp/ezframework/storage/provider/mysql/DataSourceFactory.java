@@ -12,7 +12,13 @@ import java.util.Objects;
  */
 public final class DataSourceFactory {
     private DataSourceFactory() {}
-
+    /**
+     * Build a {@link DataSource} using MySQL configuration values from the
+     * provided plugin's config (keys under `mysql.*`).
+     *
+     * @param plugin host plugin used to read configuration
+     * @return configured {@link DataSource}
+     */
     public static DataSource fromConfig(JavaPlugin plugin) {
         String host = plugin.getConfig().getString("mysql.host", "localhost");
         int port = plugin.getConfig().getInt("mysql.port", 3306);
@@ -27,6 +33,16 @@ public final class DataSourceFactory {
         return fromJdbc(jdbcUrl, user, password, maxPool, connTimeout);
     }
 
+    /**
+     * Build a HikariCP {@link DataSource} with explicit parameters.
+     *
+     * @param jdbcUrl JDBC connection URL
+     * @param user database user
+     * @param password database password (may be null or empty)
+     * @param maximumPoolSize maximum pool size
+     * @param connectionTimeoutMs connection timeout in milliseconds
+     * @return configured DataSource
+     */
     public static DataSource fromJdbc(String jdbcUrl, String user, String password, int maximumPoolSize, long connectionTimeoutMs) {
         HikariConfig cfg = new HikariConfig();
         cfg.setJdbcUrl(jdbcUrl);
@@ -44,6 +60,14 @@ public final class DataSourceFactory {
         return new HikariDataSource(cfg);
     }
 
+    /**
+     * Convenience overload that uses sensible defaults for pool size and timeout.
+     *
+     * @param jdbcUrl JDBC connection URL
+     * @param user database user
+     * @param password database password
+     * @return configured DataSource with default pooling parameters
+     */
     public static DataSource fromJdbc(String jdbcUrl, String user, String password) {
         return fromJdbc(jdbcUrl, user, password, 10, 30_000L);
     }

@@ -1,0 +1,45 @@
+name: Docs CI
+
+on:
+  pull_request:
+    branches: [ main, master ]
+
+permissions:
+  contents: read
+
+jobs:
+  lint-markdown:
+    name: Lint Markdown
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Lint Markdown files
+        run: |
+          # Lint Markdown style
+          npx -y markdownlint-cli2 "docs/**/*.md"
+          # Check for broken links in each Markdown file
+          find docs -name '*.md' -print0 | xargs -0 -n1 -I{} sh -c 'npx -y markdown-link-check "{}" || exit 1'
+
+  javadoc-doclint:
+    name: Javadoc Doclint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Run aggregated javadoc with doclint
+        run: |
+          mvn -DskipTests -B -Dadditionalparam=-Xdoclint:all -Dmaven.javadoc.failOnError=true javadoc:aggregate

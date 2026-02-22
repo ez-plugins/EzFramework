@@ -11,6 +11,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class ManagerInitComponent implements Component {
     private final JavaPlugin plugin;
 
+    /**
+     * Create a component that initializes managers for the given plugin.
+     * @param plugin plugin instance
+     */
     public ManagerInitComponent(JavaPlugin plugin) {
         this.plugin = plugin;
     }

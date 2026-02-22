@@ -18,22 +18,45 @@ import java.util.List;
 public class MigrationHelper {
     private final DataSource ds;
     private final String migrationsTable;
-
+    /**
+     * Create a MigrationHelper that records applied migrations in the default
+     * table `ezframework_migrations`.
+     *
+     * @param ds the DataSource to use for applying migrations
+     */
     public MigrationHelper(DataSource ds) {
         this(ds, "ezframework_migrations");
     }
 
+    /**
+     * Create a MigrationHelper using a custom migrations table name.
+     *
+     * @param ds the DataSource to use
+     * @param migrationsTable the table name to record applied migrations
+     */
     public MigrationHelper(DataSource ds, String migrationsTable) {
         this.ds = ds;
         this.migrationsTable = migrationsTable;
     }
 
+    /**
+     * Ensure the migrations tracking table exists.
+     *
+     * @throws Exception on SQL errors
+     */
     public void ensureMigrationsTable() throws Exception {
         try (Connection c = ds.getConnection(); Statement st = c.createStatement()) {
             st.executeUpdate("CREATE TABLE IF NOT EXISTS `" + migrationsTable + "` (id VARCHAR(100) PRIMARY KEY, applied_at TIMESTAMP)");
         }
     }
 
+    /**
+     * Apply the provided migrations in order if they have not already been
+     * recorded as applied. This method is idempotent.
+     *
+     * @param migrations list of migrations to apply
+     * @throws Exception on SQL errors
+     */
     public void applyMigrations(List<Migration> migrations) throws Exception {
         ensureMigrationsTable();
         try (Connection c = ds.getConnection()) {
@@ -70,10 +93,23 @@ public class MigrationHelper {
         }
     }
 
+    /**
+     * Simple migration descriptor used by {@link MigrationHelper}.
+     * Holds a stable migration id and the SQL statements to execute.
+     */
     public static final class Migration {
+        /** Unique migration identifier (e.g. '001-create-table'). */
         public final String id;
+
+        /** SQL statements to execute for this migration. */
         public final List<String> statements;
 
+        /**
+         * Create a migration descriptor.
+         *
+         * @param id migration id
+         * @param statements SQL statements to execute
+         */
         public Migration(String id, List<String> statements) {
             this.id = id;
             this.statements = statements;

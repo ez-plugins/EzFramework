@@ -31,7 +31,6 @@ public class MyMessageProvider implements MessageProvider {
 
 Registering a provider
 
-
 Register your provider during bootstrap so it is available to all components when the plugin is enabled. There are two common approaches depending on your integration:
 
 - Register via the framework `Registry` or bootstrap component: add your `MessageProvider` instance into the registry during the `bootstrap` phase.
@@ -67,7 +66,6 @@ Messaging.forPlugin(this).registerProvider(mm);
 // Then usage is identical:
 Messaging.forPlugin(this).send(player, "<green>Welcome, <player>!");
 ```
-
 
 3) Full TagResolver support via a custom provider
 
@@ -151,4 +149,3 @@ Notes
 - When using placeholders, prefer `TagResolver`/`Placeholder` to inject components or string values safely.
 - Register and initialize your provider during bootstrap so other managers and commands can rely on it.
 - Remember to close `BukkitAudiences` on plugin shutdown to avoid resource leaks.
-

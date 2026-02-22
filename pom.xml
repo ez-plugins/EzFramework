@@ -4,10 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.skyblockexp</groupId>
     <artifactId>ezframework</artifactId>
-    <version>0.1.5</version>
+    <version>0.2.0</version>
     <packaging>pom</packaging>
     <name>EzFramework</name>
     <description>EzFramework multi-module parent POM</description>
+    <url>https://github.com/${github.owner}/${github.repository}</url>
 
     <modules>
         <module>ezframework-query</module>
@@ -20,7 +21,7 @@
 
     <properties>
         <!-- Root project version controlled by property -->
-        <project.version>0.1.5</project.version>
+        <project.version>0.2.0</project.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -33,12 +34,13 @@
         <github.repository>ezframework</github.repository>
         
         <!-- Module-specific versions (controlled centrally) -->
-        <module.query.version>0.1.5</module.query.version>
-        <module.core.version>0.1.5</module.core.version>
-        <module.message.version>0.1.5</module.message.version>
-        <module.cli.version>0.1.5</module.cli.version>
-        <module.storage.version>0.1.5</module.storage.version>
-        <module.gui.version>0.1.5</module.gui.version>
+        <revision>0.2.0</revision>
+        <module.query.version>${revision}</module.query.version>
+        <module.core.version>${revision}</module.core.version>
+        <module.message.version>${revision}</module.message.version>
+        <module.cli.version>${revision}</module.cli.version>
+        <module.storage.version>${revision}</module.storage.version>
+        <module.gui.version>${revision}</module.gui.version>
     </properties>
 
     <profiles>
@@ -128,4 +130,85 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.5.0</version>
+                    <configuration>
+                        <failOnError>false</failOnError>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-site-plugin</artifactId>
+                    <version>3.12.1</version>
+                        <!-- no explicit Doxia dependencies here; allow plugins to bring compatible versions -->
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                    <version>3.9.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <id>aggregate-javadocs</id>
+                        <phase>site</phase>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                        <configuration>
+                            <failOnError>false</failOnError>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>3.9.0</version>
+                <configuration>
+                    <!-- exclude reports that trigger Doxia linkage issues in this environment -->
+                    <reports>
+                        <report>index</report>
+                        <report>summary</report>
+                        <report>dependencies</report>
+                        <report>dependency-management</report>
+                        <report>distribution-management</report>
+                        <report>modules</report>
+                        <report>plugins</report>
+                        <report>plugin-management</report>
+                        <report>licenses</report>
+                        <report>scm</report>
+                        <report>team</report>
+                        <report>ci-management</report>
+                        <report>issue-management</report>
+                        <report>mailing-lists</report>
+                    </reports>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.5.0</version>
+                <configuration>
+                    <aggregate>true</aggregate>
+                    <failOnError>false</failOnError>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

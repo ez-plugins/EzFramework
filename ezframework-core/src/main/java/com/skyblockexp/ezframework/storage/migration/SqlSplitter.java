@@ -10,6 +10,14 @@ import java.util.List;
 public final class SqlSplitter {
     private SqlSplitter() {}
 
+    /**
+     * Split a SQL script into individual statements. This method attempts to
+     * respect quoted strings and both line/block comments when locating
+     * statement terminators (';').
+     *
+     * @param sql SQL script to split
+     * @return list of individual SQL statements (trimmed)
+     */
     public static List<String> split(String sql) {
         List<String> out = new ArrayList<>();
         if (sql == null || sql.isEmpty()) return out;

@@ -22,39 +22,77 @@ public final class CommandBuilder {
     private SimpleTabCompleter completer;
     private final List<Subcommand> subcommands = new ArrayList<>();
 
+    /**
+     * Create a new CommandBuilder for the given plugin and command name.
+     *
+     * @param plugin the plugin instance
+     * @param commandName the command name to register
+     */
     public CommandBuilder(JavaPlugin plugin, String commandName) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
         this.commandName = Objects.requireNonNull(commandName, "commandName");
     }
 
+    /**
+     * Set a short description for the command.
+     *
+     * @param description short description text
+     * @return this builder for chaining
+     */
     public CommandBuilder description(String description) {
         this.description = description == null ? "" : description;
         return this;
     }
 
+    /**
+     * Set the permission required to execute the command.
+     *
+     * @param permission permission node (empty for none)
+     * @return this builder for chaining
+     */
     public CommandBuilder permission(String permission) {
         this.permission = permission == null ? "" : permission;
         return this;
     }
 
+    /**
+     * Provide a simple executor callback for the command.
+     *
+     * @param executor callback to execute command logic
+     * @return this builder for chaining
+     */
     public CommandBuilder executor(SimpleExecutor executor) {
         this.executor = executor;
         return this;
     }
 
+    /**
+     * Provide a simple tab-completer callback.
+     *
+     * @param completer tab completion provider
+     * @return this builder for chaining
+     */
     public CommandBuilder completer(SimpleTabCompleter completer) {
         this.completer = completer;
         return this;
     }
 
+    /**
+     * Add a subcommand to the constructed command.
+     *
+     * @param subcommand the subcommand to add
+     * @return this builder for chaining
+     */
     public CommandBuilder subcommand(Subcommand subcommand) {
         if (subcommand != null) this.subcommands.add(subcommand);
         return this;
     }
 
     /**
-     * Build an `EzCmd` instance. The returned command is registered with the
-     * underlying Bukkit `plugin.getCommand(...)` when constructed by `EzCmd`.
+     * Build an {@link EzCmd} instance. The returned command is registered with
+     * the underlying Bukkit command system when constructed by {@link EzCmd}.
+     *
+     * @return constructed EzCmd instance
      */
     public EzCmd build() {
         final SimpleExecutor exec = this.executor;
@@ -88,13 +126,35 @@ public final class CommandBuilder {
         return cmd;
     }
 
+    /**
+     * Functional callback used to execute a simple command implementation.
+     */
     @FunctionalInterface
     public interface SimpleExecutor {
+        /**
+         * Execute the command.
+         *
+         * @param sender the command sender
+         * @param args command arguments
+         * @return true if command was handled
+         * @throws Exception on errors
+         */
         boolean execute(CommandSender sender, String[] args) throws Exception;
     }
 
+    /**
+     * Functional callback used to provide tab-completion candidates.
+     */
     @FunctionalInterface
     public interface SimpleTabCompleter {
+        /**
+         * Provide tab-completion candidates.
+         *
+         * @param sender the command sender
+         * @param args current arguments
+         * @return candidate completions
+         * @throws Exception on errors
+         */
         List<String> complete(CommandSender sender, String[] args) throws Exception;
     }
 }

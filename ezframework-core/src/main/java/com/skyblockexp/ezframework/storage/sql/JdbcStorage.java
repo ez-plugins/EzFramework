@@ -9,9 +9,21 @@ import java.util.Map;
  * maps.
  */
 public interface JdbcStorage {
-    /** Execute a SQL query with parameters and return rows as a list of column->value maps. */
+    /**
+     * Execute a SQL query with parameters and return rows as a list of column->value maps.
+     * @param sql SQL statement
+     * @param params positional parameters (may be null)
+     * @return list of rows where each row is a map of column->value
+     * @throws Exception on SQL or mapping errors
+     */
     java.util.List<java.util.Map<String, Object>> query(String sql, java.util.List<Object> params) throws Exception;
 
-    /** Execute a SQL update/insert/delete with parameters. Returns affected row count. */
+    /**
+     * Execute a SQL update/insert/delete with parameters.
+     * @param sql SQL statement
+     * @param params positional parameters (may be null)
+     * @return number of affected rows
+     * @throws Exception on SQL errors
+     */
     int executeUpdate(String sql, java.util.List<Object> params) throws Exception;
 }

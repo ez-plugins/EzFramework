@@ -1,0 +1,39 @@
+name: Publish Docs
+
+on:
+  release:
+    types: [created]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Build aggregated Javadoc (apidocs only)
+        run: mvn -DskipTests -B clean javadoc:aggregate
+
+      # No helper step: publish aggregated Javadoc directly from target/site/apidocs
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./target/site/apidocs
+          publish_branch: gh-pages
+          keep_history: true
+          commit_message: "Publish docs for ${{ github.event.release.tag_name }} [skip ci]"

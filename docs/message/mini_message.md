@@ -12,7 +12,7 @@ Common features
 
 Example message template (resource file):
 
-```
+```text
 welcome.message = <green>Welcome, <player>! <gray>You have <yellow>{coins}</yellow> coins.
 ```
 

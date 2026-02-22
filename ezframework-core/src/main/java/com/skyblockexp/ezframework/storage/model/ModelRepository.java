@@ -13,12 +13,21 @@ import java.util.Optional;
 /**
  * Generic repository for storing and retrieving `Model` instances using a
  * `StorageProvider`.
+ *
+ * @param <T> model type
  */
 public class ModelRepository<T extends Model> {
     private final StorageProvider provider;
     private final String prefix;
     private final ModelFactory<T> factory;
 
+    /**
+     * Create a new repository backed by the given provider.
+     *
+     * @param provider storage provider to use
+     * @param prefix   optional storage prefix (may be null)
+     * @param factory  factory to instantiate models
+     */
     public ModelRepository(StorageProvider provider, String prefix, ModelFactory<T> factory) {
         this.provider = provider;
         this.prefix = (prefix == null) ? "" : prefix;
@@ -30,6 +39,12 @@ public class ModelRepository<T extends Model> {
         return prefix + "/" + id;
     }
 
+    /**
+     * Persist the given model using the configured storage provider.
+     *
+     * @param model model to persist
+     * @throws Exception when persistence fails
+     */
     public void save(T model) throws Exception {
         // If a SQL table is registered for this prefix and the provider offers
         // JDBC operations, persist into columns instead of default storage.
@@ -61,6 +76,13 @@ public class ModelRepository<T extends Model> {
         provider.save(model.getStoragePath(prefix), model.toMap());
     }
 
+    /**
+     * Find a model by id.
+     *
+     * @param id model identifier
+     * @return optional model instance
+     * @throws Exception on storage errors
+     */
     public Optional<T> find(String id) throws Exception {
         TableMeta meta = ModelTableRegistry.get(prefix);
         if (meta != null && provider instanceof JdbcStorage) {
@@ -82,6 +104,12 @@ public class ModelRepository<T extends Model> {
         return Optional.of(m);
     }
 
+    /**
+     * Delete the model with the given id.
+     *
+     * @param id model identifier
+     * @throws Exception on storage errors
+     */
     public void delete(String id) throws Exception {
         TableMeta meta = ModelTableRegistry.get(prefix);
         if (meta != null && provider instanceof JdbcStorage) {
@@ -95,6 +123,13 @@ public class ModelRepository<T extends Model> {
         provider.delete(storagePath(id));
     }
 
+    /**
+     * Check existence of a model id.
+     *
+     * @param id model identifier
+     * @return true if the id exists
+     * @throws Exception on storage errors
+     */
     public boolean exists(String id) throws Exception {
         TableMeta meta = ModelTableRegistry.get(prefix);
         if (meta != null && provider instanceof JdbcStorage) {
@@ -110,6 +145,10 @@ public class ModelRepository<T extends Model> {
 
     /**
      * Query for models matching the given Query. Returns instantiated models.
+     *
+     * @param q query to execute
+     * @return list of matching models (may be empty)
+     * @throws Exception on storage or query errors
      */
     public java.util.List<T> query(Query q) throws Exception {
         java.util.List<T> out = new java.util.ArrayList<>();

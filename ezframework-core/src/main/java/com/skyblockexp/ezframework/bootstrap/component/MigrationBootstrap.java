@@ -11,6 +11,11 @@ public class MigrationBootstrap implements Component {
     private final MigrationManager manager = new MigrationManager();
     private final JavaPlugin plugin;
 
+    /**
+     * Create a migration bootstrap component bound to the plugin.
+     *
+     * @param plugin host plugin
+     */
     public MigrationBootstrap(JavaPlugin plugin) {
         this.plugin = plugin;
     }

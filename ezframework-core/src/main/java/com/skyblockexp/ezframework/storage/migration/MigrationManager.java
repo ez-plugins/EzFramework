@@ -21,9 +21,16 @@ import java.util.zip.CRC32;
  */
 public class MigrationManager {
 
+    /**
+     * Create a migration manager.
+     */
     public MigrationManager() {
     }
 
+    /**
+     * Discover and apply migrations for all providers registered in {@link com.skyblockexp.ezframework.storage.StorageRegistry}.
+     * @param plugin host plugin used to locate resources
+     */
     public void applyMigrations(JavaPlugin plugin) {
         // discover providers
         for (Map.Entry<String, StorageProvider> e : StorageRegistry.getAll().entrySet()) {
@@ -299,7 +306,10 @@ public class MigrationManager {
     }
 
     /**
-     * Rollback last applied migration for the given provider. Returns true if a rollback was applied.
+     * Rollback last applied migration for the given provider.
+     * @param plugin host plugin used to locate resources
+     * @param providerName provider identifier
+     * @return true if a rollback was applied, false otherwise
      */
     public boolean rollbackLast(JavaPlugin plugin, String providerName) {
         // prefer DB-backed manifest if provider supports it

@@ -9,17 +9,36 @@ import org.bukkit.entity.Player;
 public final class BukkitGuiAdapters {
     private BukkitGuiAdapters() {}
 
+    /**
+     * Wrap a Bukkit {@link Player} as a {@link GuiPlayer} for use by core APIs.
+     *
+     * @param player the Bukkit player to wrap
+     * @return a platform-agnostic {@link GuiPlayer}
+     */
     public static GuiPlayer wrap(Player player) {
         return new BukkitWrappedGuiPlayer(player);
     }
 
+    /**
+     * {@link GuiPlayer} adapter backed by a Bukkit {@link Player} instance.
+     */
     public static class BukkitWrappedGuiPlayer implements GuiPlayer {
         private final Player player;
 
+        /**
+         * Create a wrapper for the given Bukkit player.
+         *
+         * @param player the Bukkit player
+         */
         public BukkitWrappedGuiPlayer(Player player) {
             this.player = player;
         }
 
+        /**
+         * Access the underlying Bukkit {@link Player}.
+         *
+         * @return the wrapped Bukkit player
+         */
         public Player getPlayer() { return player; }
 
         @Override

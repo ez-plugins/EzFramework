@@ -8,9 +8,22 @@ import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Utility that generates source files from text stubs.
+ */
 public final class FileGenerator {
     private FileGenerator() {}
 
+    /**
+     * Generate a Java source file from a named stub.
+     *
+     * @param stubName stub resource name (under /stubs)
+     * @param pkg target package (may be empty)
+     * @param cls target class name
+     * @param base base path of the module where sources will be created
+     * @return path to the created file
+     * @throws IOException on IO errors
+     */
     public static Path generateFromStub(String stubName, String pkg, String cls, Path base) throws IOException {
         String stub = StubLoader.load(stubName);
         Map<String, String> vars = new HashMap<>();
