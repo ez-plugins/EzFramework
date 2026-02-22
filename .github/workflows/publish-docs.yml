@@ -27,10 +27,11 @@ jobs:
       - name: Build site and aggregated javadoc
         run: mvn -DskipTests -B clean javadoc:aggregate site
 
-      - name: Prepare publish directory
+      - name: Prepare publish directory (apidocs only)
         run: |
           chmod +x tools/publish-docs-helper.sh
-          ./tools/publish-docs-helper.sh "${{ github.event.release.tag_name }}" site-publish
+          # publish only aggregated Javadoc (apidocs) as the website
+          ./tools/publish-docs-helper.sh "${{ github.event.release.tag_name }}" site-publish apidocs
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

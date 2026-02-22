@@ -38,15 +38,27 @@ if [ $RC -ne 0 ]; then
   git clone --branch gh-pages --single-branch "$REPO_CLONE" "$GH_PAGES_DIR"
 fi
 
-if [ ! -d "target/site" ]; then
-  echo "target/site not found — ensure you ran mvn site/javadoc:aggregate first" >&2
-  exit 1
+if [ "$3" = "apidocs" ]; then
+  # publish only aggregated apidocs content
+  if [ ! -d "target/site/apidocs" ]; then
+    echo "target/site/apidocs not found — ensure you ran mvn javadoc:aggregate site" >&2
+    exit 1
+  fi
+  echo "Copying apidocs into gh-pages tree as /$TAG/"
+  rm -rf "$GH_PAGES_DIR/$TAG"
+  mkdir -p "$GH_PAGES_DIR/$TAG"
+  # copy contents of apidocs as the site root for this tag
+  cp -a target/site/apidocs/. "$GH_PAGES_DIR/$TAG/"
+else
+  if [ ! -d "target/site" ]; then
+    echo "target/site not found — ensure you ran mvn site/javadoc:aggregate first" >&2
+    exit 1
+  fi
+  echo "Copying site into gh-pages tree as /$TAG/"
+  rm -rf "$GH_PAGES_DIR/$TAG"
+  mkdir -p "$GH_PAGES_DIR/$TAG"
+  cp -a target/site/. "$GH_PAGES_DIR/$TAG/"
 fi
-
-echo "Copying site into gh-pages tree as /$TAG/"
-rm -rf "$GH_PAGES_DIR/$TAG"
-mkdir -p "$GH_PAGES_DIR/$TAG"
-cp -a target/site/. "$GH_PAGES_DIR/$TAG/"
 
 cd "$GH_PAGES_DIR"
 
