@@ -34,12 +34,13 @@
         <github.repository>ezframework</github.repository>
         
         <!-- Module-specific versions (controlled centrally) -->
-        <module.query.version>0.1.5</module.query.version>
-        <module.core.version>0.1.5</module.core.version>
-        <module.message.version>0.1.5</module.message.version>
-        <module.cli.version>0.1.5</module.cli.version>
-        <module.storage.version>0.1.5</module.storage.version>
-        <module.gui.version>0.1.5</module.gui.version>
+        <revision>0.1.5</revision>
+        <module.query.version>${revision}</module.query.version>
+        <module.core.version>${revision}</module.core.version>
+        <module.message.version>${revision}</module.message.version>
+        <module.cli.version>${revision}</module.cli.version>
+        <module.storage.version>${revision}</module.storage.version>
+        <module.gui.version>${revision}</module.gui.version>
     </properties>
 
     <profiles>
