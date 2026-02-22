@@ -27,20 +27,13 @@ jobs:
       - name: Build aggregated Javadoc (apidocs only)
         run: mvn -DskipTests -B clean javadoc:aggregate
 
-      - name: Prepare publish directory (apidocs only)
-        run: |
-          chmod +x tools/publish-docs-helper.sh
-          # publish only aggregated Javadoc (apidocs) as the website
-          ./tools/publish-docs-helper.sh "${{ github.event.release.tag_name }}" site-publish apidocs
-        env:
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # No helper step: publish aggregated Javadoc directly from target/site/apidocs
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./site-publish
+          publish_dir: ./target/site/apidocs
           publish_branch: gh-pages
           keep_history: true
           commit_message: "Publish docs for ${{ github.event.release.tag_name }} [skip ci]"
