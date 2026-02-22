@@ -306,9 +306,6 @@ public class MigrationManager {
     }
 
     /**
-     * Rollback last applied migration for the given provider. Returns true if a rollback was applied.
-     */
-    /**
      * Rollback last applied migration for the given provider.
      * @param plugin host plugin used to locate resources
      * @param providerName provider identifier
