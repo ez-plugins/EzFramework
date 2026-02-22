@@ -24,8 +24,8 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Build site and aggregated javadoc
-        run: mvn -DskipTests -B clean javadoc:aggregate site
+      - name: Build aggregated Javadoc (apidocs only)
+        run: mvn -DskipTests -B clean javadoc:aggregate
 
       - name: Prepare publish directory (apidocs only)
         run: |
