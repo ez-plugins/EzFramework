@@ -21,4 +21,3 @@ Extending or replacing the GUI implementation
 
 Tests and examples
 - The module contains unit tests that verify conversion and metadata persistence. See the `ezframework-gui` test sources for examples of using `ItemConverter` and `MetadataSerializer` in isolation.
-

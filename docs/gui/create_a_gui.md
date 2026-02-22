@@ -24,11 +24,11 @@ Example (summary):
 
 ```java
 MenuDefinition menu = MenuDefinition.builder(3)
-	.title(Messaging.forPlugin(plugin).format("<gold>Example"))
-	.item(13, Material.APPLE, Messaging.forPlugin(plugin).format("<green>Eat"), ctx -> {
-		ctx.player().sendMessage("Nom!");
-	})
-	.build();
+  .title(Messaging.forPlugin(plugin).format("<gold>Example"))
+  .item(13, Material.APPLE, Messaging.forPlugin(plugin).format("<green>Eat"), ctx -> {
+    ctx.player().sendMessage("Nom!");
+  })
+  .build();
 
 GuiService guiService = EzGUI.getGuiService();
 GuiPlayer gp = BukkitGuiAdapters.wrap(player);
@@ -36,4 +36,3 @@ guiService.openMenu(gp, menu);
 ```
 
 See `menu_builder.md` for builder options and advanced patterns.
-

@@ -7,9 +7,9 @@ Action signature
 
 ```java
 menu.item(0, Material.PAPER, "Do thing", ctx -> {
-	GuiPlayer player = ctx.player();
-	int slot = ctx.slot();
-	ctx.player().sendMessage("Clicked slot " + slot);
+  GuiPlayer player = ctx.player();
+  int slot = ctx.slot();
+  ctx.player().sendMessage("Clicked slot " + slot);
 });
 ```
 
@@ -27,4 +27,3 @@ Action IDs and metadata
 Best practices
 - Keep actions concise and non-blocking. For long-running work, schedule asynchronously and send results back to the player on the main thread.
 - Avoid capturing large outer-scope state in lambdas — prefer referencing service objects or small immutable values.
-

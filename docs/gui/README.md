@@ -17,13 +17,13 @@ Example (conceptual):
 ```java
 // Build a menu
 MenuDefinition menu = MenuDefinition.builder(3)
-	.title(Messaging.forPlugin(plugin).format("<gold>Example Menu"))
-	.item(0, Material.DIAMOND, Messaging.forPlugin(plugin).format("<white>Click me"),
-		ctx -> {
-			ctx.player().sendMessage("You clicked!");
-			ctx.close(); // close the menu if desired
-		})
-	.build();
+  .title(Messaging.forPlugin(plugin).format("<gold>Example Menu"))
+  .item(0, Material.DIAMOND, Messaging.forPlugin(plugin).format("<white>Click me"),
+    ctx -> {
+      ctx.player().sendMessage("You clicked!");
+      ctx.close(); // close the menu if desired
+    })
+  .build();
 
 // Open the menu for a player (Bukkit example)
 GuiService guiService = EzGUI.getGuiService();
@@ -51,4 +51,3 @@ guiService.openMenu(guiPlayer, menu);
 - [Bukkit Example](docs/gui/bukkit_example.md)
 
 If you want, I can also add step-by-step examples for Bukkit and a minimal runnable example plugin. Want me to add that?
-

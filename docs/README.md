@@ -13,17 +13,17 @@ This documentation contains guided usage, API overviews, and practical examples 
 
 - [Getting Started](getting_started.md)
 - Commands
-	- [EzCmd reference](command/ez_cmd.md)
-	- [Subcommands](command/subcommand.md)
+  - [EzCmd reference](command/ez_cmd.md)
+  - [Subcommands](command/subcommand.md)
 - Messaging
-	- [Message provider overview](message/mini_message.md)
-	- [Color codes & formatting](message/color_codes.md)
+  - [Message provider overview](message/mini_message.md)
+  - [Color codes & formatting](message/color_codes.md)
 - Storage
-	- [Storage provider guide](storage/storage_provider.md)
-	- (Repository API details) (storage/storage_provider.md)
+  - [Storage provider guide](storage/storage_provider.md)
+  - (Repository API details) (storage/storage_provider.md)
 - System
-	- [Bootstrap & lifecycle](system/bootstrap.md)
-	- [Registry usage](system/registry.md)
+  - [Bootstrap & lifecycle](system/bootstrap.md)
+  - [Registry usage](system/registry.md)
 
 ## Quick Start
 
@@ -34,10 +34,10 @@ Example minimal plugin skeleton:
 
 ```java
 public class MyPlugin extends EzPlugin {
-		@Override
-		public void onEnable() {
-				// Register managers, providers, commands here
-		}
+    @Override
+    public void onEnable() {
+        // Register managers, providers, commands here
+    }
 }
 ```
 
@@ -63,4 +63,3 @@ Contributions are welcome. Please follow the repository's code style and include
 ---
 
 If you'd like, I can now populate `getting_started.md` with installation steps and a complete quick-start example. Proceed?
-

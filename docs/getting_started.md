@@ -89,4 +89,4 @@ File: [storage/storage_provider.md](storage/storage_provider.md)
 
 ---
 
-If you'd like, I can now draft `command/ez_cmd.md` with API examples and code snippets. Proceed? 
+If you'd like, I can now draft `command/ez_cmd.md` with API examples and code snippets. Proceed?

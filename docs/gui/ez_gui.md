@@ -15,4 +15,3 @@ Threading and concurrency
 
 Compatibility notes
 - The `ezframework-gui` module separates platform-specific adapters and converters (`ItemConverter`, `MetadataSerializer`) from the core `GuiService` interface so the core remains usable by alternative implementations.
-

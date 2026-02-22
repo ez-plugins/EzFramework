@@ -63,7 +63,6 @@ Notes:
 - Use `Subcommand` implementations to structure multi-action commands.
 - Use permission checks (`sender.hasPermission(...)`) to gate sensitive operations.
 
-
 ## Arguments & Validation
 
 - Validate argument count and types early and provide helpful feedback to the sender.

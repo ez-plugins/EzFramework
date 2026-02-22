@@ -12,16 +12,16 @@
 ```java
 // 'plugin' is your JavaPlugin instance (e.g. 'this' in your main class)
 EzCmd cmd = EzCmd.builder(plugin, "hello")
-	.description("Sends a greeting")
-	.permission("myplugin.command.hello")
-	.executor((sender, args) -> {
-		sender.sendMessage("Hello, world!");
-		return true; // indicate handled
-	})
-	.completer((sender, args) -> {
-		return Collections.emptyList();
-	})
-	.build();
+  .description("Sends a greeting")
+  .permission("myplugin.command.hello")
+  .executor((sender, args) -> {
+    sender.sendMessage("Hello, world!");
+    return true; // indicate handled
+  })
+  .completer((sender, args) -> {
+    return Collections.emptyList();
+  })
+  .build();
 
 // If your project uses the framework Registry, register during bootstrap:
 // bootstrap.getRegistry().registerCommand(cmd);

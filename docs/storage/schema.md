@@ -6,7 +6,7 @@ provider-agnostic way (currently generates MySQL-compatible DDL).
 
 Example migration:
 
-```
+```text
 public class CreatePlayersTable implements Migration {
   public String id() { return "2026_02_19_create_players"; }
   public String description() { return "Create players table"; }

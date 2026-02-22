@@ -6,11 +6,11 @@ Basic usage
 
 ```java
 MenuDefinition menu = MenuDefinition.builder(3)
-	.title(Messaging.forPlugin(plugin).format("<gold>My Menu"))
-	.item(10, Material.BOOK, Messaging.forPlugin(plugin).format("<white>Info"), ctx -> {
-		ctx.player().sendMessage("You opened info");
-	})
-	.build();
+  .title(Messaging.forPlugin(plugin).format("<gold>My Menu"))
+  .item(10, Material.BOOK, Messaging.forPlugin(plugin).format("<white>Info"), ctx -> {
+    ctx.player().sendMessage("You opened info");
+  })
+  .build();
 ```
 
 Slots and placeholders
@@ -24,4 +24,3 @@ Dynamic content and updates
 
 Advanced: custom item conversion
 - If you need custom serialization for item metadata beyond what `ItemConverter` provides, implement your own converter and ensure your `GuiService` delegates to it. For platform adapters, follow `ItemConverter` and `MetadataSerializer` patterns.
-
