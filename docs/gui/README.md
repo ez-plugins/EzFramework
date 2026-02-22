@@ -42,12 +42,10 @@ guiService.openMenu(guiPlayer, menu);
 - The GUI module separates conversion and metadata concerns into `ItemConverter` and `MetadataSerializer`; you generally do not need to access item PDC directly.
 
 **Further Reading**
-- [Create a GUI](docs/gui/create_a_gui.md)
-- [Menu Builder](docs/gui/menu_builder.md)
-- [GUI Actions](docs/gui/gui_action.md)
-- [GUI Package Overview](docs/gui/gui_package.md)
-- [EzGUI Integration Notes](docs/gui/ez_gui.md)
-
-- [Bukkit Example](docs/gui/bukkit_example.md)
+- [Create a GUI](create_a_gui.md)
+- [Menu Builder](menu_builder.md)
+- [GUI Actions](gui_action.md)
+- [GUI Package Overview](gui_package.md)
+- [EzGUI Integration Notes](ez_gui.md)
 
 If you want, I can also add step-by-step examples for Bukkit and a minimal runnable example plugin. Want me to add that?
