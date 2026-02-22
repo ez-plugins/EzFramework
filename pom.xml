@@ -15,6 +15,7 @@
         <module>message-minimessage</module>
         <module>ezframework-cli</module>
         <module>storage-mysql</module>
+        <module>ezframework-gui</module>
     </modules>
 
     <properties>
@@ -37,6 +38,7 @@
         <module.message.version>0.1.5</module.message.version>
         <module.cli.version>0.1.5</module.cli.version>
         <module.storage.version>0.1.5</module.storage.version>
+        <module.gui.version>0.1.5</module.gui.version>
     </properties>
 
     <profiles>
