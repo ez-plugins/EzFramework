@@ -35,5 +35,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./target/site/apidocs
           publish_branch: gh-pages
-          keep_history: true
           commit_message: "Publish docs for ${{ github.event.release.tag_name }} [skip ci]"
