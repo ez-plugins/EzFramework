@@ -1,0 +1,45 @@
+name: Publish Docs
+
+on:
+  release:
+    types: [created]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Build site and aggregated javadoc
+        run: mvn -DskipTests -B clean javadoc:aggregate site
+
+      - name: Prepare publish directory
+        run: |
+          chmod +x tools/publish-docs-helper.sh
+          ./tools/publish-docs-helper.sh "${{ github.event.release.tag_name }}" site-publish
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./site-publish
+          publish_branch: gh-pages
+          keep_history: true
+          commit_message: "Publish docs for ${{ github.event.release.tag_name }} [skip ci]"
