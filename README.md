@@ -22,6 +22,35 @@ EzFramework provides a compact set of utilities for Bukkit/Spigot plugins:
 1. Add EzFramework as a dependency (install to your local repo or include as a module).
 2. Extend `EzPlugin` and provide bootstrap `Component`s via `components()`.
 
+## Using with JitPack
+
+Add the JitPack repository to your consumer `pom.xml`:
+
+```xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+```
+
+Then depend on the module coordinates exposed by this POM. Example (use the repo tag/version you want):
+
+```xml
+<dependency>
+    <groupId>com.github.ez-plugins.EzFramework</groupId>
+    <artifactId>ezframework-core</artifactId>
+    <version>0.2.1</version>
+</dependency>
+
+<dependency>
+    <groupId>com.github.ez-plugins.EzFramework</groupId>
+    <artifactId>message-minimessage</artifactId>
+    <version>0.2.1</version>
+</dependency>
+```
+
 ## Example
 
 The `EzPlugin` base class makes `onEnable()` and `onDisable()` final; provide startup logic

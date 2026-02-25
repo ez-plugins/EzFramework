@@ -3,9 +3,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.skyblockexp</groupId>
+        <groupId>com.github.ez-plugins.EzFramework</groupId>
         <artifactId>ezframework</artifactId>
-        <version>0.2.1</version>
+        <version>0.2.2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -16,7 +16,7 @@
     <dependencies>
         <!-- Core API -->
         <dependency>
-            <groupId>com.skyblockexp</groupId>
+            <groupId>com.github.ez-plugins.EzFramework</groupId>
             <artifactId>ezframework-core</artifactId>
             <version>${module.core.version}</version>
         </dependency>
@@ -27,6 +27,15 @@
             <artifactId>paper-api</artifactId>
             <version>${paper.version}</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- Shared test plugin/classes -->
+        <dependency>
+            <groupId>com.github.ez-plugins.EzFramework</groupId>
+            <artifactId>ezframework-testutil</artifactId>
+            <version>${revision}</version>
+            <classifier>tests</classifier>
+            <scope>test</scope>
         </dependency>
 
         <!-- Test: MockBukkit for integration tests -->

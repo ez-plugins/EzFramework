@@ -4,14 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.skyblockexp</groupId>
+        <groupId>com.github.ez-plugins.EzFramework</groupId>
         <artifactId>ezframework</artifactId>
-        <version>0.2.1</version>
+        <version>0.2.2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>ezframework-message-minimessage</artifactId>
-    <version>${module.message.version}</version>
+    <artifactId>message-minimessage</artifactId>
     <name>EzFramework - Message MiniMessage</name>
 
     <dependencies>
@@ -22,7 +21,7 @@
         </dependency>
         <!-- Depend on the core project API (ezframework-core) -->
         <dependency>
-            <groupId>com.skyblockexp</groupId>
+            <groupId>com.github.ez-plugins.EzFramework</groupId>
             <artifactId>ezframework-core</artifactId>
             <version>${module.core.version}</version>
         </dependency>

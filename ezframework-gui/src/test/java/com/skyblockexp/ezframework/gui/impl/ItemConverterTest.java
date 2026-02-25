@@ -7,6 +7,7 @@ import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.Test;
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;
+import com.skyblockexp.ezframework.testutil.TestPlugin;
 
 import java.util.Map;
 
@@ -14,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class ItemConverterTest {
 
-    public static class TestPlugin extends org.bukkit.plugin.java.JavaPlugin {}
+    
 
     @Test
     public void toAndFromItemStack_preservesDisplayAndMetadata() {

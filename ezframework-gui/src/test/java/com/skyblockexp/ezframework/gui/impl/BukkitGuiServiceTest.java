@@ -6,13 +6,13 @@ import com.skyblockexp.ezframework.gui.api.MenuDefinition;
 import org.junit.jupiter.api.Test;
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;
-import org.bukkit.plugin.java.JavaPlugin;
+import com.skyblockexp.ezframework.testutil.TestPlugin;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class BukkitGuiServiceTest {
 
-    public static class TestPlugin extends JavaPlugin {}
+    
 
     @Test
     public void openMenuOpensInventory() {

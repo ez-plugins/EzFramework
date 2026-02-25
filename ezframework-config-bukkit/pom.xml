@@ -1,0 +1,107 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.github.ez-plugins.EzFramework</groupId>
+        <artifactId>ezframework</artifactId>
+        <version>0.2.2</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>ezframework-config-bukkit</artifactId>
+    <name>EzFramework Config (Bukkit adapters)</name>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.ez-plugins.EzFramework</groupId>
+            <artifactId>ezframework-config</artifactId>
+            <version>${module.config.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ez-plugins.EzFramework</groupId>
+            <artifactId>ezframework-core</artifactId>
+            <version>${module.core.version}</version>
+        </dependency>
+        
+        <!-- Shared test plugin/classes -->
+        <dependency>
+            <groupId>com.github.ez-plugins.EzFramework</groupId>
+            <artifactId>ezframework-testutil</artifactId>
+            <version>${revision}</version>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>io.papermc.paper</groupId>
+            <artifactId>paper-api</artifactId>
+            <version>${paper.version}</version>
+            <!-- The server environment provides the Paper/Spigot implementation at runtime.
+                 Set as `provided` so the artifact is available for compilation locally
+                 but not bundled into runtime artifacts. CI must have network access to
+                 the Paper/Spigot repositories so the dependency can be resolved. -->
+            <scope>provided</scope>
+        </dependency>
+        <!-- Test dependencies for Bukkit adapters -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>${mockbukkit.groupId}</groupId>
+            <artifactId>${mockbukkit.artifactId}</artifactId>
+            <version>${mockbukkit.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- paper-api is provided at compile scope above; no need to redeclare for tests -->
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>papermc</id>
+            <name>PaperMC</name>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>spigot-repo</id>
+            <name>Spigot Snapshots</name>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>

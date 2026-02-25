@@ -18,8 +18,7 @@ Register the provider during plugin bootstrap:
 bootstrap.getRegistry().register(new com.skyblockexp.ezframework.storage.provider.mysql.MysqlStorageProvider());
 ```
 
-Helpers
--------
+## Helpers
 
 The module provides helpers to simplify production usage:
 
