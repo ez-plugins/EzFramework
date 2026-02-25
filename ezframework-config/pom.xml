@@ -1,0 +1,50 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.github.ez-plugins.EzFramework</groupId>
+        <artifactId>ezframework</artifactId>
+        <version>0.2.2</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>ezframework-config</artifactId>
+    <name>EzFramework Config</name>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.ez-plugins.EzFramework</groupId>
+            <artifactId>ezframework-core</artifactId>
+            <version>${module.core.version}</version>
+        </dependency>
+        <!-- platform API is not required for this module; bukkit adapters contain Paper/Spigot API -->
+        <!-- Note: Bukkit adapters live in ezframework-config-bukkit module -->
+        <!-- Platform-specific adapters were moved to ezframework-config-bukkit -->
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- MockBukkit for Bukkit integration tests -->
+        <!-- Platform-specific test dependencies (MockBukkit/paper) moved to ezframework-config-bukkit -->
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>
+

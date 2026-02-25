@@ -4,14 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.skyblockexp</groupId>
+        <groupId>com.github.ez-plugins.EzFramework</groupId>
         <artifactId>ezframework</artifactId>
-        <version>0.2.1</version>
+        <version>0.2.2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>ezframework-cli</artifactId>
-    <version>${module.cli.version}</version>
     <name>EzFramework - CLI</name>
 
     <dependencies>
@@ -21,7 +20,7 @@
             <version>4.7.5</version>
         </dependency>
         <dependency>
-            <groupId>com.skyblockexp</groupId>
+            <groupId>com.github.ez-plugins.EzFramework</groupId>
             <artifactId>ezframework-core</artifactId>
             <version>${module.core.version}</version>
         </dependency>

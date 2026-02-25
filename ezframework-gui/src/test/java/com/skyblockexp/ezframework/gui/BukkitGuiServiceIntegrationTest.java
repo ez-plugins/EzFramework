@@ -14,7 +14,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;
-import org.bukkit.plugin.java.JavaPlugin;
+import com.skyblockexp.ezframework.testutil.TestPlugin;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BukkitGuiServiceIntegrationTest {
 
-    public static class TestPlugin extends JavaPlugin {}
+    
 
     @AfterEach
     public void teardown() {

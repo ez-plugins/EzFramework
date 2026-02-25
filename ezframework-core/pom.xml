@@ -4,14 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.skyblockexp</groupId>
+        <groupId>com.github.ez-plugins.EzFramework</groupId>
         <artifactId>ezframework</artifactId>
-        <version>0.2.1</version>
+        <version>0.2.2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>ezframework-core</artifactId>
-    <version>${module.core.version}</version>
     <name>EzFramework - Core</name>
 
     <dependencies>
@@ -42,10 +41,26 @@
         </dependency>
         <!-- query builder module -->
         <dependency>
-            <groupId>com.skyblockexp</groupId>
+            <groupId>com.github.ez-plugins.EzFramework</groupId>
             <artifactId>ezframework-query</artifactId>
             <version>${module.query.version}</version>
         </dependency>
+        <!-- Shared test utilities (independent module) -->
+        <dependency>
+            <groupId>com.github.ez-plugins.EzFramework</groupId>
+            <artifactId>ezframework-testutil</artifactId>
+            <version>${revision}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.github.ez-plugins.EzFramework</groupId>
+            <artifactId>ezframework-testutil</artifactId>
+            <version>${revision}</version>
+            <classifier>tests</classifier>
+            <scope>test</scope>
+        </dependency>
+        
+        <!-- core intentionally does not depend on ezframework-config to avoid cycles -->
     </dependencies>
 
     <build>

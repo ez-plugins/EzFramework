@@ -18,11 +18,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class MigrationManagerTest {
 
-    static class TestPlugin extends EzPlugin {
+    static class PluginWithResources extends EzPlugin {
         private final Map<String, byte[]> resources = new HashMap<>();
         private final File dataFolder;
 
-        TestPlugin(File dataFolder) { this.dataFolder = dataFolder; }
+        PluginWithResources(File dataFolder) { this.dataFolder = dataFolder; }
 
         void addResource(String path, String content) { resources.put(path, content.getBytes(StandardCharsets.UTF_8)); }
 
@@ -129,7 +129,7 @@ public class MigrationManagerTest {
 
     @Test
     public void applyMigrations_writesManifest_and_executesSql_onMigrationCapableProvider() {
-        TestPlugin plugin = new TestPlugin(tmpDir);
+        PluginWithResources plugin = new PluginWithResources(tmpDir);
         plugin.addResource("migrations/index.txt", "001_init.sql\n");
         plugin.addResource("migrations/001_init.sql", "CREATE TABLE x (id VARCHAR(10));");
 
@@ -155,7 +155,7 @@ public class MigrationManagerTest {
     @Test
     public void rollbackLast_dbBacked_removesDbEntry_and_executesDownSql() throws Exception {
         // prepare plugin with down migration resource
-        TestPlugin plugin = new TestPlugin(tmpDir);
+        PluginWithResources plugin = new PluginWithResources(tmpDir);
         String id = "002_add";
         plugin.addResource("migrations/" + id + ".down.sql", "DROP TABLE if exists x;");
 

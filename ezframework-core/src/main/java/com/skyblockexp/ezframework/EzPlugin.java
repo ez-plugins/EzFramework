@@ -24,6 +24,58 @@ public abstract class EzPlugin extends JavaPlugin {
 
     @Override
     public final void onEnable() {
+        // Attempt to auto-register a ConfigBootstrap if the ezframework-config module
+        // is present on the classpath. This keeps config loading early and optional.
+        try {
+            Class<?> cbCls = Class.forName("com.skyblockexp.ezframework.config.ConfigBootstrap", true, getClass().getClassLoader());
+            try {
+                java.lang.reflect.Constructor<?> ctor = cbCls.getConstructor(org.bukkit.plugin.java.JavaPlugin.class, String.class);
+                Object inst = ctor.newInstance(this, "config.yml");
+                if (inst instanceof com.skyblockexp.ezframework.bootstrap.Component) {
+                    bootstrap.register((com.skyblockexp.ezframework.bootstrap.Component) inst);
+                    getLogger().fine("Registered ConfigBootstrap for config.yml");
+                }
+            } catch (NoSuchMethodException ns) {
+                getLogger().fine("ConfigBootstrap found but no suitable constructor");
+            }
+        } catch (ClassNotFoundException ignored) {
+            // ezframework-config not present; skip auto-registration
+        } catch (Throwable t) {
+            getLogger().severe("Failed to auto-register ConfigBootstrap: " + t.getMessage());
+        }
+        // Also attempt to auto-register a ConfigManager (new SPI-based multi-config support)
+        try {
+            Class<?> cmCls = Class.forName("com.skyblockexp.ezframework.config.ConfigManager", true, getClass().getClassLoader());
+            try {
+                java.lang.reflect.Constructor<?> ctor = cmCls.getConstructor();
+                Object inst = ctor.newInstance();
+                if (inst instanceof com.skyblockexp.ezframework.bootstrap.Component) {
+                    bootstrap.register((com.skyblockexp.ezframework.bootstrap.Component) inst);
+                    getLogger().fine("Registered ConfigManager");
+                }
+            } catch (NoSuchMethodException ns) {
+                getLogger().fine("ConfigManager found but no suitable constructor");
+            }
+        } catch (ClassNotFoundException ignored) {
+            // ezframework-config not present; skip
+        } catch (Throwable t) {
+            getLogger().severe("Failed to auto-register ConfigManager: " + t.getMessage());
+        }
+        // Register core ConfigBootstrapComponent only if a PlatformConfigProvider exists
+        try {
+            java.util.ServiceLoader<com.skyblockexp.ezframework.config.PlatformConfigProvider> loader =
+                    java.util.ServiceLoader.load(com.skyblockexp.ezframework.config.PlatformConfigProvider.class, getClass().getClassLoader());
+            if (loader.iterator().hasNext()) {
+                com.skyblockexp.ezframework.config.ConfigBootstrapComponent cbc = new com.skyblockexp.ezframework.config.ConfigBootstrapComponent(this);
+                bootstrap.register(cbc);
+                getLogger().fine("Registered ConfigBootstrapComponent");
+            } else {
+                getLogger().fine("No PlatformConfigProvider found; skipping ConfigBootstrapComponent");
+            }
+        } catch (NoClassDefFoundError | Exception e) {
+            // config module not present or failed to construct; skip
+            getLogger().fine("ConfigBootstrapComponent not available: " + e.getMessage());
+        }
         List<Component> comps = components();
         if (comps != null) {
             for (Component c : comps) {

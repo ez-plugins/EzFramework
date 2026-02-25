@@ -1,7 +1,7 @@
 package com.skyblockexp.ezframework.query;
 
 import org.mockbukkit.mockbukkit.MockBukkit;
-import org.bukkit.plugin.java.JavaPlugin;
+import com.skyblockexp.ezframework.testutil.TestPlugin;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -9,8 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class PluginFeatureTest {
 
-    public static class TestPlugin extends JavaPlugin {
-    }
+    
 
     @AfterEach
     public void teardown() {

@@ -1,5 +1,6 @@
 package com.skyblockexp.ezframework.bootstrap;
 
+import com.skyblockexp.ezframework.testutil.TestPlugin;
 import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,6 +44,4 @@ public class BootstrapTest {
         b.stopAll();
         assertTrue(calls.get() >= before + 2);
     }
-
-    static class TestPlugin extends org.bukkit.plugin.java.JavaPlugin {}
 }

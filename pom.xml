@@ -2,9 +2,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.skyblockexp</groupId>
+    <groupId>com.github.ez-plugins.EzFramework</groupId>
     <artifactId>ezframework</artifactId>
-    <version>0.2.1</version>
+    <version>0.2.2</version>
     <packaging>pom</packaging>
     <name>EzFramework</name>
     <description>EzFramework multi-module parent POM</description>
@@ -17,11 +17,14 @@
         <module>ezframework-cli</module>
         <module>storage-mysql</module>
         <module>ezframework-gui</module>
+        <module>ezframework-config</module>
+        <module>ezframework-config-bukkit</module>
+        <module>ezframework-testutil</module>
     </modules>
 
     <properties>
         <!-- Root project version controlled by property -->
-        <project.version>0.2.1</project.version>
+        <project.version>0.2.2</project.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -34,13 +37,14 @@
         <github.repository>ezframework</github.repository>
         
         <!-- Module-specific versions (controlled centrally) -->
-        <revision>0.2.1</revision>
+        <revision>0.2.2</revision>
         <module.query.version>${revision}</module.query.version>
         <module.core.version>${revision}</module.core.version>
         <module.message.version>${revision}</module.message.version>
         <module.cli.version>${revision}</module.cli.version>
         <module.storage.version>${revision}</module.storage.version>
         <module.gui.version>${revision}</module.gui.version>
+        <module.config.version>${revision}</module.config.version>
     </properties>
 
     <profiles>
