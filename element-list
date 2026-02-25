@@ -4,6 +4,9 @@ com.skyblockexp.ezframework.bootstrap.component
 com.skyblockexp.ezframework.cli
 com.skyblockexp.ezframework.cli.generator
 com.skyblockexp.ezframework.command
+com.skyblockexp.ezframework.config
+com.skyblockexp.ezframework.config.impl
+com.skyblockexp.ezframework.config.migration
 com.skyblockexp.ezframework.gui.api
 com.skyblockexp.ezframework.gui.impl
 com.skyblockexp.ezframework.message.api
@@ -15,3 +18,4 @@ com.skyblockexp.ezframework.storage.model
 com.skyblockexp.ezframework.storage.provider
 com.skyblockexp.ezframework.storage.provider.mysql
 com.skyblockexp.ezframework.storage.sql
+com.skyblockexp.ezframework.testutil
