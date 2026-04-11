@@ -5,7 +5,7 @@ EzFramework defines a **platform-agnostic** protocol and API in `ezframework-cor
 ## What you get
 
 | Layer | Module / package | Role |
-|--------|------------------|------|
+| --- | --- | --- |
 | Protocol & types | `ezframework-core` → `com.skyblockexp.ezframework.proxy` | `EzPacket`, namespaced IDs, `EzSerializer`, `EzPacketRegistry`, `EzMessenger`, `ServerConnection`, `ServerMessage`, `EzContext` |
 | Velocity transport | `ezframework-velocity` | `VelocityEzMessenger`, `VelocityBootstrap` plugin |
 | BungeeCord transport | `ezframework-bungee` | `BungeeEzMessenger`, `BungeeBootstrap` plugin |
