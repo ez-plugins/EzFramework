@@ -2,6 +2,8 @@
 
 This section describes the framework's messaging abstractions and conventions: the message provider API, formatting conventions (MiniMessage-style markup), and Minecraft color codes.
 
+For **proxy ↔ backend plugin channels** (Velocity / BungeeCord, JSON packets), see [Cross-server messaging](../proxy/cross_server_messaging.md) — that is a separate API from chat formatting here.
+
 Recommended reading order:
 
 - [Message provider API and registration](message_provider.md)

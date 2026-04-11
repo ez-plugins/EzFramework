@@ -10,6 +10,7 @@
     <description>EzFramework multi-module parent POM</description>
     <url>https://github.com/${github.owner}/${github.repository}</url>
 
+    <!-- Core Bukkit/Paper modules — always built -->
     <modules>
         <module>ezframework-query</module>
         <module>ezframework-core</module>
@@ -45,9 +46,29 @@
         <module.storage.version>${revision}</module.storage.version>
         <module.gui.version>${revision}</module.gui.version>
         <module.config.version>${revision}</module.config.version>
+        <module.velocity.version>${revision}</module.velocity.version>
+        <module.bungee.version>${revision}</module.bungee.version>
     </properties>
 
     <profiles>
+        <!--
+            proxy profile — opt-in build for proxy transport modules.
+
+            Activate with:  mvn install -P proxy
+            or in CI:       mvn install -P proxy,feature-tests
+
+            These modules are kept separate so Bukkit/Paper plugin developers
+            do not need Velocity or BungeeCord APIs on their classpath when
+            building EzFramework normally.
+        -->
+        <profile>
+            <id>proxy</id>
+            <modules>
+                <module>ezframework-velocity</module>
+                <module>ezframework-bungee</module>
+            </modules>
+        </profile>
+
         <profile>
             <id>feature-tests</id>
             <build>

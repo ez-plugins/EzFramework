@@ -18,6 +18,8 @@ This documentation contains guided usage, API overviews, and practical examples 
 - Messaging
   - [Message provider overview](message/mini_message.md)
   - [Color codes & formatting](message/color_codes.md)
+- Proxy (cross-server)
+  - [Cross-server messaging (Velocity / BungeeCord)](proxy/cross_server_messaging.md)
 - Storage
   - [Storage provider guide](storage/storage_provider.md)
   - (Repository API details) (storage/storage_provider.md)
@@ -54,7 +56,8 @@ Key concepts:
 2. `system/bootstrap.md` and `system/registry.md` — understand lifecycle and service registration.
 3. `command/ez_cmd.md` and `command/subcommand.md` — implement commands.
 4. `message/*` — messaging APIs and formatting.
-5. `storage/*` — data persistence and providers.
+5. `proxy/cross_server_messaging.md` — proxy ↔ backend plugin channels and packet protocol.
+6. `storage/*` — data persistence and providers.
 
 ## Contributing
 

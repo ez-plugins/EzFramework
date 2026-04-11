@@ -60,6 +60,14 @@
             <scope>test</scope>
         </dependency>
         
+        <!-- Gson for EzSerializer (proxy package). Declared explicitly so the proxy
+             package works outside Bukkit environments (e.g. Velocity). -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
+        </dependency>
+
         <!-- core intentionally does not depend on ezframework-config to avoid cycles -->
     </dependencies>
 

@@ -1,0 +1,59 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.github.ez-plugins.EzFramework</groupId>
+        <artifactId>ezframework</artifactId>
+        <version>0.2.2</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>ezframework-velocity</artifactId>
+    <name>EzFramework - Velocity</name>
+    <description>Velocity proxy transport implementation for the EzFramework cross-server messaging API.</description>
+
+    <dependencies>
+        <!-- Core messaging API (no Bukkit/Spigot transitive pull) -->
+        <dependency>
+            <groupId>com.github.ez-plugins.EzFramework</groupId>
+            <artifactId>ezframework-core</artifactId>
+            <version>${module.core.version}</version>
+            <!-- Exclude spigot-api: not present on a Velocity proxy -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.spigotmc</groupId>
+                    <artifactId>spigot-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Velocity API — provided by the proxy server at runtime -->
+        <dependency>
+            <groupId>com.velocitypowered</groupId>
+            <artifactId>velocity-api</artifactId>
+            <version>3.3.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.10.1</version>
+                <configuration>
+                    <!-- Velocity API requires Java 17+ -->
+                    <source>17</source>
+                    <target>17</target>
+                    <!-- Preserve parameter names for Velocity's Guice injection -->
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
