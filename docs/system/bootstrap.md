@@ -6,7 +6,7 @@ The `Bootstrap` class manages an ordered list of `Component`s and drives the plu
 
 ## How it works
 
-```
+```text
 onEnable()
   → Bootstrap.register(c1), register(c2), ...
   → Bootstrap.startAll()   — calls c.start() in registration order; stops already-started
@@ -55,7 +55,7 @@ protected List<Component> components() {
 ## Available built-in components (ezframework-core)
 
 | Class | Purpose |
-|---|---|
+| --- | --- |
 | `RegistryBootstrap` | Ensures a `Registry` exists for the plugin |
 | `MigrationBootstrap` | Discovers and applies pending SQL/Java migrations |
 | `ManagerInitComponent` | Calls `Registry.initAll()` on all registered managers |

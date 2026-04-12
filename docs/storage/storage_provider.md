@@ -89,7 +89,7 @@ StorageProvider provider()
 ## Available implementations
 
 | Artifact | Class | Notes |
-|---|---|---|
+| --- | --- | --- |
 | `ezframework-core` | `YamlStorageProvider` | YAML flat-file storage; no migrations |
 | `storage-mysql` | `MysqlStorageProvider` | MySQL/MariaDB JDBC; implements `MigrationCapable` and `JdbcStorage` |
 

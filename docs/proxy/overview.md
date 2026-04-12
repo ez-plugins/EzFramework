@@ -5,7 +5,7 @@ a proxy (Velocity or BungeeCord) and backend servers.
 
 ## Architecture
 
-```
+```text
 backend plugin           proxy plugin
   EzSerializer   ──────►  EzPacketRegistry / EzSerializer
   EzPacketRegistry         VelocityEzMessenger / BungeeEzMessenger
@@ -21,7 +21,7 @@ backend plugin           proxy plugin
 ## Key types
 
 | Type | Location | Purpose |
-|---|---|---|
+| --- | --- | --- |
 | `EzPacket` | `ezframework-api` | Marker interface; implementations declare `packetId()` |
 | `EzPacketNamespace` | `ezframework-api` | Validates and lowercases a namespace; generates IDs |
 | `EzPacketRegistry` | `ezframework-api` | Maps packet IDs to classes |

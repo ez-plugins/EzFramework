@@ -25,7 +25,7 @@ String h2Sql = Schema.table("players")
 Available column methods:
 
 | Method | SQL type (MySQL) |
-|---|---|
+| --- | --- |
 | `id()` | `VARCHAR(255) NOT NULL` + `PRIMARY KEY` |
 | `string(name, length, notNull)` | `VARCHAR(length)` |
 | `integer(name, notNull)` | `INT` |
@@ -36,7 +36,7 @@ Available column methods:
 ## Migration types
 
 | `MigrationType` | Description |
-|---|---|
+| --- | --- |
 | `SQL` | Raw SQL file resource in the plugin JAR |
 | `JAVA` | Java class implementing `Migration` |
 
@@ -79,7 +79,7 @@ Register via the Java `ServiceLoader` mechanism:
    in your plugin's resources.
 2. Each non-comment line should be the fully-qualified class name of a migration:
 
-```
+```text
 com.example.myplugin.migrations.CreatePlayersTable
 com.example.myplugin.migrations.AddActiveColumn
 ```

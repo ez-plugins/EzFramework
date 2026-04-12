@@ -5,7 +5,7 @@ API (in `ezframework-api`) and the Bukkit implementation (in `ezframework-gui`).
 
 ## Architecture
 
-```
+```text
 ezframework-api          ezframework-gui
   MenuDefinition           BukkitGuiService (implements GuiService)
   MenuBuilder              BukkitGuiAdapters.wrap(Player) → GuiPlayer

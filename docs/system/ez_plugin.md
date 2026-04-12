@@ -15,7 +15,7 @@ Components are started in list order and stopped in reverse order.
 ## Lifecycle
 
 | Event | What happens |
-|---|---|
+| --- | --- |
 | `onEnable()` | Auto-registers config/migration components if their modules are present; registers your `components()`; calls `Bootstrap.startAll()` |
 | `onDisable()` | Calls `Bootstrap.stopAll()` |
 
