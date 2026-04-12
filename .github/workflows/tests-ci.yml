@@ -38,7 +38,7 @@ jobs:
             ${{ runner.os }}-m2-${{ matrix.paper-version }}-
 
       - name: Run unit tests
-        run: mvn -B -Dpaper.version=${{ matrix.paper-version }} -Dmockbukkit.artifactId=${{ matrix.mockbukkit-artifactId }} -Dmockbukkit.version=${{ matrix.mockbukkit-version }} test
+        run: mvn -B -Pwith-velocity-api -Dpaper.version=${{ matrix.paper-version }} -Dmockbukkit.artifactId=${{ matrix.mockbukkit-artifactId }} -Dmockbukkit.version=${{ matrix.mockbukkit-version }} test
 
       - name: Publish unit test results
         if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
@@ -87,7 +87,7 @@ jobs:
             ${{ runner.os }}-m2-feature-${{ matrix.paper-version }}-
 
       - name: Run feature tests
-        run: mvn -B -Dpaper.version=${{ matrix.paper-version }} -Dmockbukkit.artifactId=${{ matrix.mockbukkit-artifactId }} -Dmockbukkit.version=${{ matrix.mockbukkit-version }} -Pfeature-tests -Dtest=*FeatureTest test
+        run: mvn -B -Pwith-velocity-api,feature-tests -Dpaper.version=${{ matrix.paper-version }} -Dmockbukkit.artifactId=${{ matrix.mockbukkit-artifactId }} -Dmockbukkit.version=${{ matrix.mockbukkit-version }} -Dtest=*FeatureTest test
 
       - name: Publish feature test results
         if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}

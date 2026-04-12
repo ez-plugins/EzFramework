@@ -29,12 +29,38 @@
             </exclusions>
         </dependency>
 
-        <!-- Velocity API — provided by the proxy server at runtime -->
+        <!-- Velocity API — provided by the proxy at runtime. For local tests see profile below. -->
         <dependency>
             <groupId>com.velocitypowered</groupId>
             <artifactId>velocity-api</artifactId>
-            <version>3.3.0-SNAPSHOT</version>
+            <version>3.1.1</version>
             <scope>provided</scope>
+        </dependency>
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.5.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- SLF4J for Logger in tests -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>2.0.7</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -54,6 +80,35 @@
                     </compilerArgs>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.0.0</version>
+                <configuration>
+                    <useModulePath>false</useModulePath>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
+    
+    <profiles>
+        <!-- Profile to add the Velocity API onto the test classpath (CI or local test runs) -->
+        <profile>
+            <id>with-velocity-api</id>
+            <activation>
+                <!-- Activate via -Pwith-velocity-api or by setting env.WITH_VELOCITY_API=true in CI -->
+                <property>
+                    <name>with-velocity-api</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.velocitypowered</groupId>
+                    <artifactId>velocity-api</artifactId>
+                    <version>3.1.1</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 </project>

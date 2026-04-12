@@ -61,8 +61,8 @@ public final class VelocityEzMessenger implements EzMessenger {
         this.serializer = Objects.requireNonNull(serializer, "serializer");
         String[] parts = com.skyblockexp.ezframework.proxy.EzChannel.DEFAULT.parts();
         this.defaultChannelId = parts.length == 2
-                ? MinecraftChannelIdentifier.create(parts[0], parts[1])
-                : MinecraftChannelIdentifier.from(com.skyblockexp.ezframework.proxy.EzChannel.DEFAULT.getName());
+            ? MinecraftChannelIdentifier.create(parts[0], parts[1])
+            : MinecraftChannelIdentifier.from(com.skyblockexp.ezframework.proxy.EzChannel.DEFAULT.getName());
     }
 
     /**
@@ -78,7 +78,7 @@ public final class VelocityEzMessenger implements EzMessenger {
      * Resolve a Velocity channel identifier from an {@link com.skyblockexp.ezframework.proxy.EzChannel}.
      *
      * @param ezChannel the EzFramework channel descriptor
-     * @return a Velocity {@link MinecraftChannelIdentifier}
+    * @return a Velocity {@link ChannelIdentifier}
      */
     private MinecraftChannelIdentifier toChannelId(com.skyblockexp.ezframework.proxy.EzChannel ezChannel) {
         String[] parts = ezChannel.parts();
