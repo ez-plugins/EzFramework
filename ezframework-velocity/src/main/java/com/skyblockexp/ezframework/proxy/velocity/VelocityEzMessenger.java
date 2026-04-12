@@ -14,7 +14,10 @@ import org.slf4j.Logger;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.LongAdder;
 
 /**
  * Velocity-backed implementation of {@link EzMessenger} (which extends
@@ -41,6 +44,19 @@ public final class VelocityEzMessenger implements EzMessenger {
 
     /** Handlers keyed by the packet ID string returned by {@link EzPacket#packetId()}. */
     private final Map<String, EzPacketHandler<?>> handlers = new ConcurrentHashMap<>();
+
+    private final LongAdder sendCount = new LongAdder();
+    private final LongAdder sendServerMissingCount = new LongAdder();
+    private final LongAdder sendQueuedCount = new LongAdder();
+    private final LongAdder broadcastCount = new LongAdder();
+    private final LongAdder broadcastTargetCount = new LongAdder();
+    private final LongAdder broadcastQueuedCount = new LongAdder();
+    private final LongAdder receiveCount = new LongAdder();
+    private final LongAdder deserializeFailureCount = new LongAdder();
+    private final LongAdder handlerMissingCount = new LongAdder();
+    private final LongAdder handlerErrorCount = new LongAdder();
+
+    private volatile Executor dispatchExecutor;
 
     /**
      * Construct a messenger. Called by {@link VelocityBootstrap}.
@@ -78,13 +94,51 @@ public final class VelocityEzMessenger implements EzMessenger {
      * Resolve a Velocity channel identifier from an {@link com.skyblockexp.ezframework.proxy.EzChannel}.
      *
      * @param ezChannel the EzFramework channel descriptor
-    * @return a Velocity {@link ChannelIdentifier}
+     * @return a Velocity {@link ChannelIdentifier}
      */
     private MinecraftChannelIdentifier toChannelId(com.skyblockexp.ezframework.proxy.EzChannel ezChannel) {
         String[] parts = ezChannel.parts();
         return parts.length == 2
                 ? MinecraftChannelIdentifier.create(parts[0], parts[1])
                 : MinecraftChannelIdentifier.from(ezChannel.getName());
+    }
+
+    /**
+     * Configure an executor for asynchronous handler dispatch. Pass {@code null}
+     * to disable and return to synchronous dispatch on the event thread.
+     *
+     * @param executor executor to use, or {@code null} for synchronous dispatch
+     */
+    public void setDispatchExecutor(Executor executor) {
+        this.dispatchExecutor = executor;
+    }
+
+    /**
+     * Return the current dispatch executor, if asynchronous dispatch is enabled.
+     *
+     * @return optional executor
+     */
+    public Optional<Executor> getDispatchExecutor() {
+        return Optional.ofNullable(dispatchExecutor);
+    }
+
+    /**
+     * Return a snapshot of current messenger metrics.
+     *
+     * @return metrics snapshot
+     */
+    public VelocityMessengerMetrics snapshotMetrics() {
+        return new VelocityMessengerMetrics(
+                sendCount.sum(),
+                sendServerMissingCount.sum(),
+                sendQueuedCount.sum(),
+                broadcastCount.sum(),
+                broadcastTargetCount.sum(),
+                broadcastQueuedCount.sum(),
+                receiveCount.sum(),
+                deserializeFailureCount.sum(),
+                handlerMissingCount.sum(),
+                handlerErrorCount.sum());
     }
 
     /**
@@ -119,11 +173,20 @@ public final class VelocityEzMessenger implements EzMessenger {
     public void send(String server, ServerMessage message) {
         Objects.requireNonNull(server, "server");
         Objects.requireNonNull(message, "message");
+        sendCount.increment();
         MinecraftChannelIdentifier channelId = toChannelId(message.getChannel());
         proxy.getServer(server).ifPresentOrElse(
-                registered -> sendToServer(registered, channelId, message.getPacket()),
-                () -> logger.warn("[EzMessenger] Cannot send packet '{}' — server '{}' not found",
-                        message.getPacket().packetId(), server));
+                registered -> {
+                    boolean sent = sendToServer(registered, channelId, message.getPacket());
+                    if (!sent) {
+                        sendQueuedCount.increment();
+                    }
+                },
+                () -> {
+                    sendServerMissingCount.increment();
+                    logger.warn("[EzMessenger] Cannot send packet '{}' — server '{}' not found",
+                            message.getPacket().packetId(), server);
+                });
     }
 
     /**
@@ -135,11 +198,14 @@ public final class VelocityEzMessenger implements EzMessenger {
     @Override
     public void broadcast(ServerMessage message) {
         Objects.requireNonNull(message, "message");
+        broadcastCount.increment();
         MinecraftChannelIdentifier channelId = toChannelId(message.getChannel());
         byte[] data = serializer.serialize(message.getPacket());
         for (RegisteredServer server : proxy.getAllServers()) {
+            broadcastTargetCount.increment();
             boolean sent = server.sendPluginMessage(channelId, data);
             if (!sent) {
+                broadcastQueuedCount.increment();
                 logger.debug("[EzMessenger] No players on '{}', plugin message queued/dropped",
                         server.getServerInfo().getName());
             }
@@ -179,34 +245,55 @@ public final class VelocityEzMessenger implements EzMessenger {
      */
     @SuppressWarnings({"unchecked", "rawtypes"})
     void dispatch(byte[] data, String sourceServer, String playerName) {
+        receiveCount.increment();
         EzPacket packet;
         try {
             packet = serializer.deserialize(data, registry);
         } catch (EzSerializer.EzSerializerException e) {
+            deserializeFailureCount.increment();
             logger.warn("[EzMessenger] Failed to deserialize incoming packet from '{}': {}",
                     sourceServer, e.getMessage());
             return;
         }
         EzPacketHandler handler = handlers.get(packet.packetId());
         if (handler == null) {
+            handlerMissingCount.increment();
             logger.debug("[EzMessenger] No handler for packet '{}' from '{}'",
                     packet.packetId(), sourceServer);
             return;
         }
         EzContext context = new EzContext(playerName, sourceServer, null);
+        Runnable task = () -> runHandler(handler, packet, context);
+        Executor executor = dispatchExecutor;
+        if (executor == null) {
+            task.run();
+            return;
+        }
         try {
-            handler.handle(packet, context);
-        } catch (Exception e) {
-            logger.error("[EzMessenger] Handler for '{}' threw an exception", packet.packetId(), e);
+            executor.execute(task);
+        } catch (RuntimeException e) {
+            logger.warn("[EzMessenger] Dispatch executor rejected handler for '{}': {}",
+                    packet.packetId(), e.getMessage());
+            task.run();
         }
     }
 
-    private void sendToServer(RegisteredServer server, MinecraftChannelIdentifier channelId, EzPacket packet) {
+    private boolean sendToServer(RegisteredServer server, MinecraftChannelIdentifier channelId, EzPacket packet) {
         byte[] data = serializer.serialize(packet);
         boolean sent = server.sendPluginMessage(channelId, data);
         if (!sent) {
             logger.debug("[EzMessenger] Plugin message for '{}' on '{}' may be queued — no connected players",
                     packet.packetId(), server.getServerInfo().getName());
+        }
+        return sent;
+    }
+
+    private void runHandler(EzPacketHandler handler, EzPacket packet, EzContext context) {
+        try {
+            handler.handle(packet, context);
+        } catch (Exception e) {
+            handlerErrorCount.increment();
+            logger.error("[EzMessenger] Handler for '{}' threw an exception", packet.packetId(), e);
         }
     }
 }

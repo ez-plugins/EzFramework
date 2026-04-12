@@ -100,6 +100,11 @@ See the `docs/` folder for guides and API details:
 - [Getting Started](docs/getting_started.md)
 - [Overview & CLI docs](docs/README.md)
 
+Proxy messaging docs
+
+- Cross-server messaging overview: [docs/proxy/cross_server_messaging.md](docs/proxy/cross_server_messaging.md)
+
+
 Command utilities and builders:
 
 - [Command builder guide](docs/command/command_builder.md)

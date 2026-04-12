@@ -1,195 +1,89 @@
-# Cross-server messaging (proxy)
+# Advanced message options — Cross-server messaging
 
-EzFramework defines a **platform-agnostic** protocol and API in `ezframework-core` for sending structured messages between a **proxy** (Velocity or BungeeCord) and **backend** servers. Transport implementations live in optional modules so Bukkit-only projects never pull proxy APIs onto the classpath.
+This page documents advanced message options and runtime behaviors available
+to EzFramework users when building cross-server packet flows. For platform
+integration examples see the Velocity and Bungee guides:
 
-## What you get
+- Velocity: [velocity.md](velocity.md)
+- Bungee: [bungee.md](bungee.md)
 
-| Layer | Module / package | Role |
-| --- | --- | --- |
-| Protocol & types | `ezframework-core` → `com.skyblockexp.ezframework.proxy` | `EzPacket`, namespaced IDs, `EzSerializer`, `EzPacketRegistry`, `EzMessenger`, `ServerConnection`, `ServerMessage`, `EzContext` |
-| Velocity transport | `ezframework-velocity` | `VelocityEzMessenger`, `VelocityBootstrap` plugin |
-| BungeeCord transport | `ezframework-bungee` | `BungeeEzMessenger`, `BungeeBootstrap` plugin |
+1) Channels and `EzChannel`
 
-**Chat formatting** (`Messaging`, MiniMessage) is unrelated; this doc is about **plugin channels** and **JSON envelopes** over the shared channel `ezframework:channel` (`EzChannel.DEFAULT`).
+- Default channel: `EzChannel.DEFAULT` (`ezframework:channel`). Use the
+	convenience `EzMessenger.send(String, EzPacket)` /
+	`broadcast(EzPacket)` overloads to send on the default channel.
+- Custom channels: construct `new EzChannel("namespace:key")` and wrap a
+	packet with `ServerMessage.of(packet, ezChannel)` when you need separate
+	transport namespaces or different routing semantics.
 
-## Building the proxy modules
+2) Delivery semantics and queued messages
 
-The parent POM only builds Bukkit-oriented modules by default. To compile and install the proxy artifacts locally:
+- Proxy transports use platform plugin messaging. Delivery depends on the
+	proxy and backend: messages may be queued, dropped, or fail if no player
+	carries the link to the backend. Expect these behaviors:
+	- Velocity: `sendPluginMessage` returns whether bytes were sent; a false
+		result indicates no connected player on that server and message may be
+		queued or dropped by the proxy.
+	- Bungee: plugin messages require an active player connection; sending to
+		empty servers may fail. Handle this by checking return values or using
+		application-level retries.
 
-```bash
-mvn install -P proxy
-```
+3) Serialization and custom types
 
-Proxy plugin projects then depend on `ezframework-velocity` or `ezframework-bungee` (and usually `ezframework-core` for shared packet classes).
+- `EzSerializer` uses Gson. To support custom field types, construct a
+	`new EzSerializer(gson)` with registered type adapters (e.g. `TypeAdapter`,
+	`JsonSerializer`). Ensure both proxy and backend use compatible Gson
+	configurations.
+- The wire envelope contains `"id"` and `"data"`. The `id` is validated
+	for the `pluginId:action` format before deserialization; unknown IDs throw
+	`EzSerializer.EzSerializerException`.
 
-## Packet IDs: mandatory namespacing
+4) Packet registration and versioning
 
-Every `EzPacket` must return an ID in **`pluginId:action`** form (exactly one colon, non-empty on both sides), for example:
+- Register packet classes in `EzPacketRegistry` on both proxy and backends.
+	Use `register(String id, Class)` to override the declared ID when needed.
+- For schema evolution prefer additive changes (new optional fields). When
+	changing field names or types, maintain backward-compatibility by either
+	using custom Gson adapters or creating a new packet ID.
 
-- `ezeconomy:balance.request`
-- `ezshops:purchase.confirm`
+5) Handler registration and threading
 
-All plugins on a network typically share **one** proxy `EzMessenger` and **one** handler map keyed by packet ID. Without this rule, two plugins could both use `balance.request` and **silently steal each other’s traffic**.
+- Register handlers via `EzMessenger.registerHandler(Class<T>, EzPacketHandler<T>)`.
+- By default handlers run on the plugin/event thread. For heavier work you
+	can offload execution using `VelocityEzMessenger#setDispatchExecutor(Executor)`
+	(Velocity) or an equivalent `Executor` wrapper in your transport. When
+	using async dispatch, be mindful of thread-safety and proxy API rules.
 
-Use **`EzPacketNamespace`** so IDs stay consistent:
+6) Observability and metrics
 
-```java
-public static final EzPacketNamespace NS = new EzPacketNamespace("myplugin");
+- `VelocityEzMessenger` exposes a `snapshotMetrics()` helper that reports
+	counters for sends, broadcasts, receives, deserialization failures, and
+	handler errors. Consider emitting these metrics to your monitoring system
+	for production visibility.
 
-@Override
-public String packetId() {
-    return NS.id("balance.request");  // "myplugin:balance.request"
-}
-```
+7) Error handling patterns
 
-`EzPacketRegistry` rejects IDs that are not namespaced. `EzSerializer` also validates incoming wire IDs before lookup.
+- Deserialization failures: log and drop the message; increment the
+	deserialize-failure counter and surface alerts for repeated failures.
+- Missing handler: log at debug and ignore — useful when multiple plugins
+	share the same messenger but not all packet types.
+- Handler exceptions: catch and log; if needed, publish an error packet back
+	to the origin server using the `sourceServer` in `EzContext`.
 
-## Wire format (`EzSerializer`)
+8) Best practices
 
-Payloads are UTF-8 JSON:
+- Use `EzPacketNamespace` to build packet IDs and avoid collisions.
+- Keep packet classes lightweight POJOs with public no-arg constructors for
+	stable Gson deserialization.
+- Favor explicit error-response packets instead of throwing for recoverable
+	errors; this keeps cross-server flows observable and debuggable.
 
-```json
-{
-  "id": "myplugin:balance.request",
-  "data": { "playerId": "Notch", "requestId": "…" }
-}
-```
+9) Platform-specific notes
 
-The `id` field must match a registered class; `data` is deserialized with Gson into that type. Packet classes need a **public no-arg constructor** and Gson-friendly fields.
+- See [velocity.md](velocity.md) for Velocity-specific dispatch, scheduler
+	examples, and the cross-version lookup helpers.
+- See [bungee.md](bungee.md) for BungeeCord notes about player-connected
+	delivery semantics.
 
-## Core API sketch
-
-- **`EzPacket`** — `String packetId()`; namespaced ID.
-- **`EzPacketHandler<T>`** — `void handle(T packet, EzContext context)`.
-- **`EzContext`** — optional `playerName`, `sourceServer`, `targetServer` (all strings, may be null).
-- **`ServerConnection`** — `send(String server, ServerMessage)`, `broadcast(ServerMessage)`.
-- **`EzMessenger`** extends `ServerConnection` and adds `registerHandler(Class<T>, EzPacketHandler<T>)`, plus **default** helpers `send(String, EzPacket)` and `broadcast(EzPacket)` that wrap `ServerMessage.of(packet)` on `EzChannel.DEFAULT`.
-- **`ServerMessage`** — `ServerMessage.of(packet)` or `ServerMessage.of(packet, new EzChannel("namespace:key"))` for a non-default channel.
-- **`EzPacketRegistry`** — `register(MyPacket.class)` / `register(String id, Class)`; both enforce namespaced IDs.
-- **`EzSerializer`** — `byte[] serialize(EzPacket)`, `EzPacket deserialize(byte[], EzPacketRegistry)`.
-
-## Example: shared packet definitions
-
-Keep these in a small shared module or duplicate identical POJOs on proxy and backend (same `packetId()` and fields).
-
-```java
-public final class ExamplePackets {
-
-    public static final EzPacketNamespace NS = new EzPacketNamespace("myplugin");
-
-    public static final class BalanceRequest implements EzPacket {
-        public String playerId;
-        public String requestId;
-
-        public BalanceRequest() {}
-
-        public BalanceRequest(String playerId, String requestId) {
-            this.playerId = playerId;
-            this.requestId = requestId;
-        }
-
-        @Override
-        public String packetId() {
-            return NS.id("balance.request");
-        }
-    }
-
-    public static final class BalanceResponse implements EzPacket {
-        public String playerId;
-        public String requestId;
-        public double balance;
-
-        public BalanceResponse() {}
-
-        public BalanceResponse(String playerId, String requestId, double balance) {
-            this.playerId = playerId;
-            this.requestId = requestId;
-            this.balance = balance;
-        }
-
-        @Override
-        public String packetId() {
-            return NS.id("balance.response");
-        }
-    }
-}
-```
-
-Do **not** import Bukkit, Velocity, or Bungee types in these classes if you want them reusable from core-style modules.
-
-## Example: Velocity (proxy)
-
-1. Install the **EzFramework** Velocity plugin (`VelocityBootstrap`); it registers `ezframework:channel` and exposes `VelocityEzMessenger`.
-2. Your Velocity plugin depends on `ezframework-velocity`, declares a dependency on plugin id `ezframework`, and on startup:
-
-```java
-// Obtain VelocityBootstrap from Velocity’s plugin manager (plugin id "ezframework")
-VelocityEzMessenger messenger = bootstrap.getMessenger();
-EzPacketRegistry reg = messenger.getRegistry();
-
-reg.register(ExamplePackets.BalanceRequest.class);
-reg.register(ExamplePackets.BalanceResponse.class);
-
-messenger.registerHandler(ExamplePackets.BalanceResponse.class, (packet, ctx) -> {
-    // ctx.getSourceServer() = backend that sent the message
-    logger.info("Balance {} for {} (request {})", packet.balance, packet.playerId, packet.requestId);
-});
-
-String rid = UUID.randomUUID().toString();
-messenger.send("survival", new ExamplePackets.BalanceRequest("Notch", rid));
-```
-
-Custom channel per message:
-
-```java
-messenger.send("survival",
-    ServerMessage.of(new ExamplePackets.BalanceRequest("Notch", rid),
-                     new EzChannel("myplugin:data")));
-```
-
-## Example: BungeeCord (proxy)
-
-Same pattern using `BungeeEzMessenger` from `ezframework-bungee` and `BungeeBootstrap` as the host plugin. Register packets and handlers the same way; `send` / `broadcast` semantics match `EzMessenger`.
-
-**Note:** BungeeCord plugin messaging only flows when players are connected on the relevant server link; empty servers may drop or fail delivery depending on version and setup.
-
-## Example: backend (Paper / Spigot)
-
-The core library does not ship a Bukkit listener; you wire the channel yourself:
-
-1. Register outgoing/incoming channel `ezframework:channel` (or the same channel you used in `ServerMessage`).
-2. On `PluginMessageReceivedEvent` (or equivalent), if the channel matches, deserialize:
-
-```java
-EzPacketRegistry reg = new EzPacketRegistry();
-reg.register(ExamplePackets.BalanceRequest.class);
-reg.register(ExamplePackets.BalanceResponse.class);
-EzSerializer serializer = new EzSerializer();
-
-// Inside your listener when channel is EzChannel.DEFAULT.getName():
-EzPacket incoming = serializer.deserialize(data, reg);
-if (incoming instanceof ExamplePackets.BalanceRequest req) {
-    double balance = /* your economy */;
-    byte[] out = serializer.serialize(
-        new ExamplePackets.BalanceResponse(req.playerId, req.requestId, balance));
-    player.sendPluginMessage(plugin, "ezframework:channel", out);
-}
-```
-
-Adjust method names to your server API version. The critical part is **same channel string**, **same JSON envelope**, and **same namespaced packet IDs** as on the proxy.
-
-## Optional: store `EzMessenger` on Bukkit
-
-For hybrid plugins you can keep a reference in the existing registry:
-
-```java
-Registry.forPlugin(plugin).register(EzMessenger.class, messenger);
-```
-
-There is no change to `EzPlugin` required; this is optional integration.
-
-## Summary
-
-- Use **`ezframework-core`** for packets, serializer, registry, and interfaces.
-- Use **`ezframework-velocity`** or **`ezframework-bungee`** only on the proxy; build them with **`mvn -P proxy`** when working from the EzFramework monorepo.
-- Always use **`pluginId:action`** packet IDs via **`EzPacketNamespace`** so every plugin under the same proxy can coexist safely.
+If you want, I can add small example snippets for retrying failed sends or
+for integrating metrics with Prometheus/Grafana. 

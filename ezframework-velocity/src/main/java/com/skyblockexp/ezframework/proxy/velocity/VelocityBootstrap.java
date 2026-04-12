@@ -2,6 +2,7 @@ package com.skyblockexp.ezframework.proxy.velocity;
 
 import com.google.inject.Inject;
 import com.skyblockexp.ezframework.proxy.EzChannel;
+import com.skyblockexp.ezframework.proxy.EzMessenger;
 import com.skyblockexp.ezframework.proxy.EzPacketRegistry;
 import com.skyblockexp.ezframework.proxy.EzSerializer;
 import com.velocitypowered.api.event.Subscribe;
@@ -9,6 +10,7 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.proxy.ProxyServer;
+import java.util.Optional;
 import org.slf4j.Logger;
 
 /**
@@ -93,6 +95,7 @@ public class VelocityBootstrap {
         proxy.getChannelRegistrar().register(messenger.getDefaultChannelId());
         proxy.getEventManager().register(this, listener);
     }
+    
 
     /**
      * Return the active messenger. {@code null} before {@link #initMessenger} has been called.
@@ -101,6 +104,28 @@ public class VelocityBootstrap {
      */
     public VelocityEzMessenger getMessenger() {
         return messenger;
+    }
+
+    /**
+     * Convenience: attempt to locate the messenger for the given proxy using
+     * a cross-version lookup (reflection-based). Returns an empty Optional if
+     * the messenger cannot be located.
+     *
+     * @param proxy velocity proxy
+     * @return optional messenger
+     */
+    public static Optional<VelocityEzMessenger> findMessenger(ProxyServer proxy) {
+        return VelocityMessengerLookup.find(proxy);
+    }
+
+    /**
+     * Convenience: attempt to locate the messenger associated with this
+     * bootstrap's proxy using the cross-version lookup.
+     *
+     * @return optional messenger
+     */
+    public Optional<VelocityEzMessenger> findMessenger() {
+        return VelocityMessengerLookup.find(this.proxy);
     }
 
     /**
