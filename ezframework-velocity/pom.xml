@@ -102,11 +102,12 @@
                 </property>
             </activation>
             <dependencies>
+                <!-- Make velocity-api available at compile time when this profile is active -->
                 <dependency>
                     <groupId>com.velocitypowered</groupId>
                     <artifactId>velocity-api</artifactId>
                     <version>3.1.1</version>
-                    <scope>test</scope>
+                    <scope>provided</scope>
                 </dependency>
             </dependencies>
         </profile>

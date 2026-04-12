@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -61,6 +62,36 @@ public class VelocityEzMessengerTest {
         ArgumentCaptor<TestPacket> captor = ArgumentCaptor.forClass(TestPacket.class);
         verify(handler, times(1)).handle(captor.capture(), any());
         assertEquals("hello", captor.getValue().text);
+    }
+
+    @Test
+    public void dispatch_usesAsyncExecutorWhenConfigured() {
+        ProxyServer proxy = mock(ProxyServer.class);
+        Logger logger = mock(Logger.class);
+
+        EzPacketRegistry registry = new EzPacketRegistry();
+        registry.register(TestPacket.class);
+
+        VelocityEzMessenger messenger = new VelocityEzMessenger(proxy, logger, registry, new EzSerializer());
+
+        @SuppressWarnings("unchecked")
+        EzPacketHandler<TestPacket> handler = mock(EzPacketHandler.class);
+        messenger.registerHandler(TestPacket.class, handler);
+
+        AtomicReference<Runnable> queued = new AtomicReference<>();
+        messenger.setDispatchExecutor(queued::set);
+
+        TestPacket pkt = new TestPacket("hello");
+        byte[] data = new EzSerializer().serialize(pkt);
+
+        messenger.dispatch(data, "backend-1", "playerA");
+
+        verify(handler, never()).handle(any(), any());
+        assertNotNull(queued.get());
+
+        queued.get().run();
+
+        verify(handler, times(1)).handle(any(), any());
     }
 
     @Test
@@ -113,5 +144,44 @@ public class VelocityEzMessengerTest {
 
         verify(server1, times(1)).sendPluginMessage(any(ChannelIdentifier.class), any(byte[].class));
         verify(server2, times(1)).sendPluginMessage(any(ChannelIdentifier.class), any(byte[].class));
+    }
+
+    @Test
+    public void metrics_snapshotTracksCounts() {
+        ProxyServer proxy = mock(ProxyServer.class);
+        Logger logger = mock(Logger.class);
+
+        RegisteredServer server = mock(RegisteredServer.class);
+        ServerInfo info = mock(ServerInfo.class);
+        when(info.getName()).thenReturn("backend-1");
+        when(server.getServerInfo()).thenReturn(info);
+        when(server.sendPluginMessage(any(ChannelIdentifier.class), any(byte[].class))).thenReturn(false);
+
+        when(proxy.getServer("missing")).thenReturn(Optional.empty());
+        when(proxy.getAllServers()).thenReturn((Collection) List.of(server));
+
+        EzPacketRegistry registry = new EzPacketRegistry();
+        registry.register(TestPacket.class);
+
+        VelocityEzMessenger messenger = new VelocityEzMessenger(proxy, logger, registry, new EzSerializer());
+
+        TestPacket pkt = new TestPacket("ping");
+        messenger.send("missing", ServerMessage.of(pkt));
+        messenger.broadcast(ServerMessage.of(pkt));
+
+        byte[] data = new EzSerializer().serialize(pkt);
+        messenger.dispatch(data, "backend-1", null);
+
+        VelocityMessengerMetrics metrics = messenger.snapshotMetrics();
+        assertEquals(1, metrics.getSendCount());
+        assertEquals(1, metrics.getSendServerMissingCount());
+        assertEquals(0, metrics.getSendQueuedCount());
+        assertEquals(1, metrics.getBroadcastCount());
+        assertEquals(1, metrics.getBroadcastTargetCount());
+        assertEquals(1, metrics.getBroadcastQueuedCount());
+        assertEquals(1, metrics.getReceiveCount());
+        assertEquals(0, metrics.getDeserializeFailureCount());
+        assertEquals(1, metrics.getHandlerMissingCount());
+        assertEquals(0, metrics.getHandlerErrorCount());
     }
 }

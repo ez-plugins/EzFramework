@@ -19,7 +19,7 @@ This documentation contains guided usage, API overviews, and practical examples 
   - [Message provider overview](message/mini_message.md)
   - [Color codes & formatting](message/color_codes.md)
 - Proxy (cross-server)
-  - [Cross-server messaging (Velocity / BungeeCord)](proxy/cross_server_messaging.md)
+  - [Cross-server messaging (overview)](proxy/overview.md)
 - Storage
   - [Storage provider guide](storage/storage_provider.md)
   - (Repository API details) (storage/storage_provider.md)
