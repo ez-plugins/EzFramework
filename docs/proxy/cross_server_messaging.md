@@ -10,23 +10,21 @@ integration examples see the Velocity and Bungee guides:
 1) Channels and `EzChannel`
 
 - Default channel: `EzChannel.DEFAULT` (`ezframework:channel`). Use the
-	convenience `EzMessenger.send(String, EzPacket)` /
-	`broadcast(EzPacket)` overloads to send on the default channel.
+    convenience `EzMessenger.send(String, EzPacket)` /
+    `broadcast(EzPacket)` overloads to send on the default channel.
 - Custom channels: construct `new EzChannel("namespace:key")` and wrap a
-	packet with `ServerMessage.of(packet, ezChannel)` when you need separate
-	transport namespaces or different routing semantics.
+    packet with `ServerMessage.of(packet, ezChannel)` when you need separate
+    transport namespaces or different routing semantics.
 
 2) Delivery semantics and queued messages
 
-- Proxy transports use platform plugin messaging. Delivery depends on the
-    proxy and backend: messages may be queued, dropped, or fail if no player
-    carries the link to the backend. Expect these behaviors:
-    - Velocity: `sendPluginMessage` returns whether bytes were sent; a false
-        result indicates no connected player on that server and message may be
-        queued or dropped by the proxy.
-    - Bungee: plugin messages require an active player connection; sending to
-        empty servers may fail. Handle this by checking return values or using
-        application-level retries.
+- Proxy transports use platform plugin messaging. Delivery depends on the proxy and backend: messages may be queued, dropped, or fail if no player carries the link to the backend. Expect these behaviors:
+  - Velocity: `sendPluginMessage` returns whether bytes were sent; a false
+      result indicates no connected player on that server and message may be
+      queued or dropped by the proxy.
+  - Bungee: plugin messages require an active player connection; sending to
+      empty servers may fail. Handle this by checking return values or using
+      application-level retries.
 
 3) Serialization and custom types
 
