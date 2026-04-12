@@ -1,7 +1,5 @@
 package com.skyblockexp.ezframework.bootstrap;
 
-import org.bukkit.plugin.java.JavaPlugin;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,20 +11,20 @@ import java.util.logging.Logger;
  * Bootstrap manager that holds multiple {@link Component}s and controls
  * their lifecycle (start/stop/reload). Components are stopped in reverse
  * registration order to help manage dependencies.
+ *
+ * <p>Construct with a {@link Logger} so this class has no platform dependency.
  */
 public final class Bootstrap {
-    private final JavaPlugin plugin;
     private final Logger logger;
     private final List<Component> components = new ArrayList<>();
 
     /**
-     * Create a Bootstrap controller for the given plugin.
+     * Create a Bootstrap controller using the given logger.
      *
-     * @param plugin the plugin instance (must not be null)
+     * @param logger logger for lifecycle messaging (must not be null)
      */
-    public Bootstrap(JavaPlugin plugin) {
-        this.plugin = Objects.requireNonNull(plugin, "plugin");
-        this.logger = plugin.getLogger();
+    public Bootstrap(Logger logger) {
+        this.logger = Objects.requireNonNull(logger, "logger");
     }
 
     /**
@@ -80,7 +78,7 @@ public final class Bootstrap {
     }
 
     /**
-     * Reload all registered components by calling their {@code reload()} hook.
+     * Reload all registered components by calling their {@link Component#reload()} hook.
      */
     public void reloadAll() {
         for (Component c : components) {

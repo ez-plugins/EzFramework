@@ -9,11 +9,12 @@ import com.skyblockexp.ezframework.config.PlatformConfigProvider;
  */
 public class BukkitPlatformConfigProvider implements PlatformConfigProvider {
     @Override
-    public void provide(EzPlugin plugin, ConfigRegistry registry) throws Exception {
-        YamlEzConfig cfg = new YamlEzConfig(plugin, "config.yml");
+    public void provide(Object plugin, ConfigRegistry registry) throws Exception {
+        EzPlugin ezPlugin = (EzPlugin) plugin;
+        YamlEzConfig cfg = new YamlEzConfig(ezPlugin, "config.yml");
         cfg.saveDefault();
         cfg.load();
         registry.register(cfg.getFileName(), cfg);
-        plugin.getLogger().fine("Registered YamlEzConfig: " + cfg.getFileName());
+        ezPlugin.getLogger().fine("Registered YamlEzConfig: " + cfg.getFileName());
     }
 }

@@ -4,27 +4,42 @@
 
 Lightweight Java framework utilities to simplify Bukkit/Spigot plugin development.
 
-- Name: EzFramework
-- Package: `com.skyblockexp.ezframework`
-- Developed by: Shadow48402
-- Maintained by: EzPlugins
-
 ## Overview
 
-EzFramework provides a compact set of utilities for Bukkit/Spigot plugins:
+EzFramework is a modular multi-module library for Bukkit/Spigot plugins:
 
-- A per-plugin `Registry` for storing and initializing managers and services.
-- A `Manager` base type with simple lifecycle methods (`init()` / `shutdown()`).
-- A `Bootstrap`/`Component` system and a convenience base plugin `EzPlugin` to coordinate startup.
+| Module | Artifact | Description |
+|---|---|---|
+| API | `ezframework-api` | Platform-free API: bootstrap, storage, proxy packets, GUI definitions, config |
+| Core | `ezframework-core` | Bukkit integration: `EzPlugin`, `Registry`, commands, messaging, YAML storage |
+| Config | `ezframework-config` | `ConfigRegistry` and `EzConfig` abstraction |
+| Config Bukkit | `ezframework-config-bukkit` | Bukkit `PlatformConfigProvider` adapter |
+| GUI | `ezframework-gui` | Bukkit inventory GUI implementation |
+| MySQL | `storage-mysql` | MySQL/JDBC `StorageProvider` |
+| MiniMessage | `message-minimessage` | MiniMessage formatting adapter |
+| CLI | `ezframework-cli` | `ez` CLI scaffolding tool |
+| Velocity | `ezframework-velocity` | Velocity proxy transport |
+| BungeeCord | `ezframework-bungee` | BungeeCord proxy transport |
+
+Key capabilities:
+
+- `Bootstrap`/`Component` lifecycle — deterministic ordered startup and shutdown.
+- Per-plugin `Registry` — typed service locator; supports `Manager` `init()`/`shutdown()` lifecycle.
+- `StorageRegistry` + `AbstractRepository` — pluggable persistence with optional SQL migrations.
+- `EzModel` — lightweight domain model with `fill`, `getAs`, `toMap`/`fromMap`, and query builder.
+- Proxy messaging — namespaced packets serialised over plugin channels; Velocity and BungeeCord transports included.
+- GUI — platform-agnostic `MenuDefinition`/`MenuBuilder` with per-slot `GuiAction`s.
+- Config — `ConfigRegistry` with per-plugin `EzConfig`s and an optional default.
 
 ## Quick start
 
-1. Add EzFramework as a dependency (install to your local repo or include as a module).
-2. Extend `EzPlugin` and provide bootstrap `Component`s via `components()`.
+1. Add EzFramework as a dependency (install to your local Maven repo or use JitPack).
+2. Extend `EzPlugin` and return your bootstrap `Component`s from `components()`.
+3. `onEnable()` and `onDisable()` are `final` — all lifecycle logic goes in components.
 
 ## Using with JitPack
 
-Add the JitPack repository to your consumer `pom.xml`:
+Add the JitPack repository to your `pom.xml`:
 
 ```xml
 <repositories>
@@ -35,41 +50,52 @@ Add the JitPack repository to your consumer `pom.xml`:
 </repositories>
 ```
 
-Then depend on the module coordinates exposed by this POM. Example (use the repo tag/version you want):
+Add the modules you need (replace `0.3.0` with the desired release tag):
 
 ```xml
+<!-- Bukkit integration: EzPlugin, Registry, commands, messaging, YAML storage -->
 <dependency>
     <groupId>com.github.ez-plugins.EzFramework</groupId>
     <artifactId>ezframework-core</artifactId>
-    <version>0.2.1</version>
+    <version>0.3.0</version>
 </dependency>
 
+<!-- Optional: MySQL storage provider -->
+<dependency>
+    <groupId>com.github.ez-plugins.EzFramework</groupId>
+    <artifactId>storage-mysql</artifactId>
+    <version>0.3.0</version>
+</dependency>
+
+<!-- Optional: MiniMessage formatting -->
 <dependency>
     <groupId>com.github.ez-plugins.EzFramework</groupId>
     <artifactId>message-minimessage</artifactId>
-    <version>0.2.1</version>
+    <version>0.3.0</version>
 </dependency>
+```
+
+Build and install proxy artifacts locally when you need them:
+
+```bash
+mvn install -P proxy
 ```
 
 ## Example
 
-The `EzPlugin` base class makes `onEnable()` and `onDisable()` final; provide startup logic
-by returning a list of `Component`s from `components()`:
+`EzPlugin` makes `onEnable()` and `onDisable()` final. Return your `Component`s from `components()`:
 
 ```java
-import java.util.Arrays;
 import java.util.List;
-
 import com.skyblockexp.ezframework.EzPlugin;
 import com.skyblockexp.ezframework.Registry;
 import com.skyblockexp.ezframework.bootstrap.Component;
-import com.skyblockexp.ezframework.bootstrap.component.RegistryBootstrap;
 
 public class MyPlugin extends EzPlugin {
+
     @Override
     protected List<Component> components() {
-        return Arrays.asList(
-            new RegistryBootstrap(this),
+        return List.of(
             new Component() {
                 @Override
                 public void start() throws Exception {
@@ -87,55 +113,66 @@ public class MyPlugin extends EzPlugin {
 }
 ```
 
-## Notes
-
-- `EzPlugin` calls `components()` during startup; do not override `onEnable()`/`onDisable()`.
-- Use `Registry.forPlugin(plugin)` to access the per-plugin `Registry` instance.
-- Register managers by string key or by `Class` and let `initAll()` / `shutdownAll()` manage lifecycles.
+Key rules:
+- `components()` controls startup order; the list is processed in declaration order.
+- Use `Registry.forPlugin(plugin)` to obtain the per-plugin registry anywhere.
+- Register managers by string key (`register("name", obj)`) or by class (`register(MyManager.class, obj)`).
+- Call `initAll()` after registering all managers; call `shutdownAll()` in your stop component.
 
 ## Documentation
 
-See the `docs/` folder for guides and API details:
+See the `docs/` folder for guides and API references:
 
 - [Getting Started](docs/getting_started.md)
-- [Overview & CLI docs](docs/README.md)
-
-Proxy messaging docs
-
-- Cross-server messaging overview: [docs/proxy/cross_server_messaging.md](docs/proxy/cross_server_messaging.md)
-
-
-Command utilities and builders:
-
-- [Command builder guide](docs/command/command_builder.md)
-- [ez-cmd usage](docs/command/ez_cmd.md)
-- [Subcommand guide](docs/command/subcommand.md)
-- [Command README](docs/command/README.md)
-
-Message utilities:
-
-- [Message provider](docs/message/message_provider.md)
-- [MiniMessage support](docs/message/mini_message.md)
-- [Color codes](docs/message/color_codes.md)
-- [Message README](docs/message/README.md)
-
-Storage & DB:
-
-- [Storage providers](docs/storage/storage_provider.md)
-- [MySQL integration](docs/storage/mysql_package.md)
-- [Schema & migrations](docs/storage/schema.md)
-- [Models reference](docs/storage/models.md)
-- [Storage README](docs/storage/README.md)
+- [Full table of contents](docs/README.md)
 
 System & bootstrap:
 
-- [Plugin bootstrap and lifecycle](docs/system/bootstrap.md)
+- [Bootstrap & lifecycle](docs/system/bootstrap.md)
 - [EzPlugin details](docs/system/ez_plugin.md)
-- [Registry & registry patterns](docs/system/registry.md)
+- [Registry patterns](docs/system/registry.md)
+
+Commands:
+
+- [EzCmd usage](docs/command/ez_cmd.md)
+- [Subcommand guide](docs/command/subcommand.md)
+- [CommandBuilder reference](docs/command/command_builder.md)
+
+Messages:
+
+- [MiniMessage support](docs/message/mini_message.md)
+- [Color codes](docs/message/color_codes.md)
+- [Message provider](docs/message/message_provider.md)
+
+Storage:
+
+- [Storage providers](docs/storage/storage_provider.md)
+- [Schema & migrations](docs/storage/schema.md)
+- [Models reference](docs/storage/models.md)
+- [MySQL integration](docs/storage/mysql_package.md)
+
+Proxy messaging:
+
+- [Overview](docs/proxy/overview.md)
+- [Quick start](docs/proxy/quick_start.md)
+- [Wire format](docs/proxy/wire_format.md)
+- [Velocity integration](docs/proxy/velocity.md)
+- [BungeeCord integration](docs/proxy/bungee.md)
+
+GUI:
+
+- [GUI overview](docs/gui/README.md)
+- [MenuBuilder](docs/gui/menu_builder.md)
+- [GUI actions](docs/gui/gui_action.md)
+
+Config:
+
+- [EzConfig](docs/config/ez_config.md)
 
 ## Contributing
 
-Contributions welcome via PR. Follow the repository conventions and run tests before submitting.
+Contributions welcome via PR. Follow the repository conventions and run `mvn clean install -P proxy`
+before submitting to ensure all tests pass.
 
 ## License
 

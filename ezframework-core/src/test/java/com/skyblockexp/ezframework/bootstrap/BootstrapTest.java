@@ -11,7 +11,7 @@ public class BootstrapTest {
     @Test
     public void startStopReloadOrderAndExceptions() {
         TestPlugin plugin = new TestPlugin();
-        Bootstrap b = new Bootstrap(plugin);
+        Bootstrap b = new Bootstrap(plugin.getLogger());
 
         AtomicInteger calls = new AtomicInteger(0);
 

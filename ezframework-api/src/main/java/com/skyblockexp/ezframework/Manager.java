@@ -1,9 +1,9 @@
 package com.skyblockexp.ezframework;
 
 /**
- * Base lifecycle class for managers stored in the `Registry`.
+ * Base lifecycle class for managers stored in the {@link Registry}.
  *
- * Extend and override `init()` and `shutdown()` as needed.
+ * <p>Extend and override {@link #init()} and {@link #shutdown()} as needed.
  */
 public abstract class Manager {
     /** Create a new Manager instance. */

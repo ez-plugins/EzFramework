@@ -13,7 +13,7 @@ import java.util.Objects;
  * component list by implementing {@link #components()}.
  */
 public abstract class EzPlugin extends JavaPlugin {
-    private final Bootstrap bootstrap = new Bootstrap(this);
+    private final Bootstrap bootstrap = new Bootstrap(getLogger());
 
     /**
      * Default constructor.

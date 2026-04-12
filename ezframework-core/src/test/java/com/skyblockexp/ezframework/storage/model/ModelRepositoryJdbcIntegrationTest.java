@@ -42,7 +42,7 @@ public class ModelRepositoryJdbcIntegrationTest {
         public String name() { return "h2-jdbc-provider"; }
 
         @Override
-        public void init(org.bukkit.plugin.java.JavaPlugin plugin) { }
+        public void init(Object plugin) { }
 
         @Override
         public void close() throws Exception { conn.close(); }

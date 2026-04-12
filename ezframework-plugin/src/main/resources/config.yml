@@ -1,0 +1,11 @@
+# EzFramework global configuration
+# This file is created automatically on first run.
+
+# GitHub coordinates used to fetch module JARs.
+github-owner: ez-plugins
+github-repo: EzFramework
+
+# Directory where downloaded module JARs are cached.
+# Change this to an absolute path if you want to store modules
+# outside the plugin data folder.
+# modules-dir: /path/to/custom/modules

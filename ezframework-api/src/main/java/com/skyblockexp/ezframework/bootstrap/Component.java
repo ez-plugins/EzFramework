@@ -2,8 +2,8 @@ package com.skyblockexp.ezframework.bootstrap;
 
 /**
  * Simple bootstrap component interface representing a startup/stop unit.
- * Implementations should perform plugin initialization in `start()` and
- * cleanup in `stop()`.
+ * Implementations should perform plugin initialization in {@link #start()} and
+ * cleanup in {@link #stop()}.
  */
 public interface Component {
     /**

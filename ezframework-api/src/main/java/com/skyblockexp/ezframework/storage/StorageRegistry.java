@@ -1,7 +1,5 @@
 package com.skyblockexp.ezframework.storage;
 
-import org.bukkit.plugin.java.JavaPlugin;
-
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -39,24 +37,24 @@ public final class StorageRegistry {
     /**
      * Get an unmodifiable view of all registered providers.
      *
-     * @return map of provider name -> provider
+     * @return map of provider name {@code ->} provider
      */
     public static Map<String, StorageProvider> getAll() {
         return Collections.unmodifiableMap(providers);
     }
 
     /**
-     * Initialize all registered providers with the given plugin context. This
-     * performs best-effort initialization and logs failures per-provider.
+     * Initialize all registered providers with the given plugin context.
+     * Failures per-provider are swallowed (best-effort).
      *
-     * @param plugin plugin instance passed to provider init
+     * @param plugin plugin instance passed to {@link StorageProvider#init(Object)}
      */
-    public static void initAll(JavaPlugin plugin) {
+    public static void initAll(Object plugin) {
         for (StorageProvider p : providers.values()) {
             try {
                 p.init(plugin);
             } catch (Exception e) {
-                plugin.getLogger().severe("Failed to init provider " + p.name() + ": " + e.getMessage());
+                // best-effort; caller should handle via platform logger
             }
         }
     }
