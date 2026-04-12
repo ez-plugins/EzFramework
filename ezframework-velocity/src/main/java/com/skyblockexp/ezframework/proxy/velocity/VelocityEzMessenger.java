@@ -1,5 +1,8 @@
 package com.skyblockexp.ezframework.proxy.velocity;
 
+import com.skyblockexp.ezframework.listener.ListenerDispatcher;
+import com.skyblockexp.ezframework.listener.ListenerMessenger;
+import com.skyblockexp.ezframework.listener.PacketListenerInterface;
 import com.skyblockexp.ezframework.proxy.EzContext;
 import com.skyblockexp.ezframework.proxy.EzMessenger;
 import com.skyblockexp.ezframework.proxy.EzPacket;
@@ -31,7 +34,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * <p>Instances are created and owned by {@link VelocityBootstrap}.
  */
-public final class VelocityEzMessenger implements EzMessenger {
+public final class VelocityEzMessenger implements EzMessenger, ListenerMessenger {
 
     private final ProxyServer proxy;
     private final Logger logger;
@@ -41,6 +44,8 @@ public final class VelocityEzMessenger implements EzMessenger {
 
     /** Handlers keyed by the packet ID string returned by {@link EzPacket#packetId()}. */
     private final Map<String, EzPacketHandler<?>> handlers = new ConcurrentHashMap<>();
+
+    private final ListenerDispatcher listenerDispatcher = new ListenerDispatcher();
 
     /**
      * Construct a messenger. Called by {@link VelocityBootstrap}.
@@ -165,6 +170,22 @@ public final class VelocityEzMessenger implements EzMessenger {
         }
     }
 
+    /**
+     * Register a Bukkit-style annotation-based packet listener.
+     *
+     * <p>Methods annotated with {@link com.skyblockexp.ezframework.listener.PacketListener}
+     * will be invoked when a matching packet is dispatched, in
+     * {@link com.skyblockexp.ezframework.listener.EventPriority} order.
+     * This is independent of {@link #registerHandler} — both may be used simultaneously.
+     *
+     * @param listener the listener to register; must not be {@code null}
+     */
+    @Override
+    public void registerListener(PacketListenerInterface listener) {
+        Objects.requireNonNull(listener, "listener");
+        listenerDispatcher.registerListener(listener);
+    }
+
     // -------------------------------------------------------------------------
     // Internal — inbound dispatch (called by VelocityPluginMessageListener)
     // -------------------------------------------------------------------------
@@ -188,17 +209,18 @@ public final class VelocityEzMessenger implements EzMessenger {
             return;
         }
         EzPacketHandler handler = handlers.get(packet.packetId());
-        if (handler == null) {
+        if (handler != null) {
+            EzContext context = new EzContext(playerName, sourceServer, null);
+            try {
+                handler.handle(packet, context);
+            } catch (Exception e) {
+                logger.error("[EzMessenger] Handler for '{}' threw an exception", packet.packetId(), e);
+            }
+        } else {
             logger.debug("[EzMessenger] No handler for packet '{}' from '{}'",
                     packet.packetId(), sourceServer);
-            return;
         }
-        EzContext context = new EzContext(playerName, sourceServer, null);
-        try {
-            handler.handle(packet, context);
-        } catch (Exception e) {
-            logger.error("[EzMessenger] Handler for '{}' threw an exception", packet.packetId(), e);
-        }
+        listenerDispatcher.fire(packet);
     }
 
     private void sendToServer(RegisteredServer server, MinecraftChannelIdentifier channelId, EzPacket packet) {
