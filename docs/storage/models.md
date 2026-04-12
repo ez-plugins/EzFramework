@@ -1,59 +1,104 @@
-# Eloquent-like Models (Lightweight)
+# Models
 
-EzFramework provides a small, Eloquent-inspired convenience layer for
-defining and persisting simple domain models backed by the existing
-`StorageProvider` abstraction.
+EzFramework provides a lightweight Eloquent-inspired model layer through `EzModel` and
+`ModelRepository` (both in `ezframework-api`).
 
-## Core concepts
+## EzModel
 
-- `Model` — base abstract class that holds an `id` and requires `toMap()` and
-  `fromMap(Map)` implementations.
-- `ModelFactory<T>` — functional factory used to instantiate a model from
-  persisted data.
-- `ModelRepository<T>` — generic repository that wraps a `StorageProvider`
-  and exposes common operations: `save`, `find`, `delete`, `exists`.
+`EzModel` is an abstract base class backed by a `Map<String, Object>`. Subclasses define the
+domain shape; the framework handles persistence via a `ModelRepository`.
 
-## Quick example
-
-Define a model:
+### Defining a model
 
 ```java
 public class PlayerData extends EzModel {
+
     public PlayerData(String id) { super(id); }
 
-    // allow mass-assignment only for 'coins' and 'name'
-    public PlayerData() { super(null); setFillable("coins", "name"); }
+    // Allow mass-assignment of specific fields
+    public PlayerData() {
+        super(null);
+        setFillable("coins", "name");
+    }
 
     public int getCoins() { return getAs("coins", Integer.class, 0); }
-    public void setCoins(int coins) { set("coins", coins); }
+    public void setCoins(int v) { set("coins", v); }
+
+    public String getName() { return getAs("name", String.class, ""); }
+    public void setName(String v) { set("name", v); }
 }
 ```
 
-### Saving and querying examples
+### Key API
 
 ```java
-StorageProvider provider = ...; // from framework or plugin
-ModelRepository<PlayerData> repo = new ModelRepository<>(provider, "players", (id, data) -> new PlayerData(id));
+// Read / write attributes
+model.set("coins", 42);
+Object raw = model.get("coins");
 
-PlayerData p = new PlayerData("uuid-1234");
-p.setCoins(42);
-repo.save(p);
+// Type-coerced read
+int coins  = model.getAs("coins", Integer.class);         // null if missing
+int coins  = model.getAs("coins", Integer.class, 0);      // 0 if missing
 
-// find by id
-Optional<PlayerData> loaded = repo.find("uuid-1234");
+// Mass assignment (respects fillable / guarded)
+model.setFillable("coins", "name");       // only these keys are mass-assignable
+model.setGuarded("secret");               // this key is blocked from mass-assign
+model.fill(Map.of("coins", 100, "secret", "s"));  // "secret" is NOT written
 
-// query
-com.skyblockexp.ezframework.query.Query q = PlayerData.queryBuilder()
-    .whereEquals("coins", 42)
-    .limit(10)
-    .build();
-java.util.List<PlayerData> matches = repo.query(q);
+// Serialisation
+Map<String, Object> map = model.toMap();  // excludes "id"
+model.fromMap(map);                       // replaces attributes; sets id if present
+
+// Unmodifiable view of current attributes (excludes "id")
+Map<String, Object> attrs = model.attributes();
+
+// Query builder (for use with ModelRepository)
+Query q = EzModel.queryBuilder().whereEquals("coins", 100).build();
+```
+
+`"id"` is always guarded — `fill()` cannot change it.
+
+## ModelRepository
+
+`ModelRepository<T>` wraps a `StorageProvider` and a `ModelFactory<T>` to provide typed CRUD
+operations:
+
+```java
+ModelRepository<PlayerData> repo = new ModelRepository<>(
+    provider,
+    "players",              // prefix; also used as ModelTableRegistry key
+    PlayerData::new         // ModelFactory: (id, data) -> T
+);
+
+// CRUD
+repo.save(player);
+Optional<PlayerData> p = repo.find("uuid-1234");
+repo.delete("uuid-1234");
+
+// Static helper on EzModel
+PlayerData p = EzModel.find(repo, "uuid-1234");  // returns null if not found
+```
+
+## ModelTableRegistry
+
+Register table metadata once (typically in a migration) so that `ModelRepository` knows which
+SQL table and columns to use when the provider implements `JdbcStorage`:
+
+```java
+ModelTableRegistry.register(
+    "players",                     // prefix — must match the repository prefix
+    "players",                     // SQL table name
+    Map.of("name", "VARCHAR(191)", "coins", "INT")
+);
+
+ModelTableRegistry.TableMeta meta = ModelTableRegistry.get("players");
+meta.tableName();   // "players"
+meta.columns();     // unmodifiable map
 ```
 
 ## Notes
 
-- This is intentionally lightweight: models are responsible for their own
-  (de)serialization to a `Map`. This avoids reflection magic and keeps the
-  API explicit and testable.
-- The `ModelRepository` can be reused with different `StorageProvider`
-  implementations (YAML, MySQL, etc.).
+- `EzModel` stores only attributes; the `id` field is separate and always excluded from `toMap()`.
+- Keep models lightweight: no reflection, no annotations — serialize/deserialize explicitly.
+- Pair with the `Schema` helper (see [schema.md](schema.md)) to create tables and register
+  `ModelTableRegistry` entries in a single migration.

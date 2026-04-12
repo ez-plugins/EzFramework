@@ -1,31 +1,67 @@
 # Cross-server messaging — Overview
 
-EzFramework provides a lightweight, platform-agnostic API for sending structured
-messages between a proxy (Velocity or BungeeCord) and backend servers. The
-implementation is intentionally split into a core protocol module and optional
-transport modules so projects only depend on what they need.
+EzFramework provides a lightweight, platform-agnostic API for sending structured messages between
+a proxy (Velocity or BungeeCord) and backend servers.
 
-- `ezframework-core` contains the protocol types and serializer; no proxy APIs are referenced.
-- `ezframework-velocity` and `ezframework-bungee` implement transports for the corresponding proxies.
-- Packets are identified by namespaced IDs (`pluginId:action`) to avoid collisions between plugins.
+## Architecture
 
-Key points
-- `ezframework-core` contains the protocol types and serializer; no proxy APIs are referenced.
-- `ezframework-velocity` and `ezframework-bungee` implement transports for the corresponding proxies.
-- Packets are identified by namespaced IDs (`pluginId:action`) to avoid collisions between plugins.
+```
+backend plugin           proxy plugin
+  EzSerializer   ──────►  EzPacketRegistry / EzSerializer
+  EzPacketRegistry         VelocityEzMessenger / BungeeEzMessenger
+  ServerMessage  ◄──────   ServerMessage
+```
 
-Related pages
-- Wire format: [wire_format.md](wire_format.md)
-- Quick start: [quick_start.md](quick_start.md)
-- Velocity integration: [velocity.md](velocity.md)
-- Bungee integration: [bungee.md](bungee.md)
-- `ezframework-core` contains the protocol types and serializer; no proxy APIs are referenced.
-- `ezframework-velocity` and `ezframework-bungee` implement transports for the corresponding proxies.
-- Packets are identified by namespaced IDs (`pluginId:action`) to avoid collisions between plugins.
+- `ezframework-api` contains the protocol types (`EzPacket`, `EzSerializer`, `EzPacketRegistry`,
+  `EzChannel`, `ServerMessage`) — no proxy APIs are referenced.
+- `ezframework-velocity` and `ezframework-bungee` provide the transport implementations.
+- Packets are identified by namespaced IDs (`pluginId:action`) to prevent collisions between
+  different plugins sharing the same proxy.
 
-Components: [component/README.md](component/README.md)
+## Key types
 
-Recommended reading order
-1. `wire_format.md` — how packets are encoded and validated
-2. `quick_start.md` — minimal setup and examples
-3. `velocity.md` / `bungee.md` — platform specifics and examples
+| Type | Location | Purpose |
+|---|---|---|
+| `EzPacket` | `ezframework-api` | Marker interface; implementations declare `packetId()` |
+| `EzPacketNamespace` | `ezframework-api` | Validates and lowercases a namespace; generates IDs |
+| `EzPacketRegistry` | `ezframework-api` | Maps packet IDs to classes |
+| `EzSerializer` | `ezframework-api` | Serialises/deserialises packets to/from JSON envelopes |
+| `EzChannel` | `ezframework-api` | Plugin channel name wrapper; `EzChannel.DEFAULT` = `"BungeeCord"` |
+| `ServerMessage` | `ezframework-api` | Pairs a packet with a channel for dispatch |
+
+## Packet IDs
+
+All packet IDs must be namespaced: `<namespace>:<action>`. Use `EzPacketNamespace` to generate
+consistent IDs:
+
+```java
+EzPacketNamespace ns = new EzPacketNamespace("myeconomy");
+String id = ns.id("balance_request");  // → "myeconomy:balance_request"
+```
+
+Namespaces are lower-cased automatically. Colons in namespace or action strings are rejected.
+
+## Sending a packet (backend → proxy)
+
+```java
+EzPacket packet = new BalanceRequest(player.getUniqueId().toString());
+ServerMessage msg = ServerMessage.of(packet);  // uses EzChannel.DEFAULT
+// Send msg via the platform plugin channel API
+```
+
+## Receiving and deserialising (proxy side)
+
+```java
+EzPacketRegistry registry = new EzPacketRegistry();
+registry.register(BalanceRequest.class);   // registers with packetId() declared on the class
+
+EzSerializer serializer = new EzSerializer(registry);
+EzPacket packet = serializer.deserialize(bytes, registry);
+```
+
+## Related pages
+
+- [Quick start](quick_start.md) — minimal setup example
+- [Wire format](wire_format.md) — JSON envelope specification and registration rules
+- [Velocity integration](velocity.md) — Velocity-specific transport
+- [BungeeCord integration](bungee.md) — BungeeCord-specific transport

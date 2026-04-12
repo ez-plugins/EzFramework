@@ -1,92 +1,184 @@
 # Getting Started with EzFramework
 
-This guide walks you through adding EzFramework to your project, creating a minimal plugin, and using the framework's core features: bootstrap, registry, commands, messaging, and storage.
+This guide walks you through adding EzFramework to your project and creating a minimal plugin using
+the framework's core features: bootstrap, registry, commands, messaging, and storage.
 
 ## Prerequisites
 
-- Java 17+ (or the project target version).
-- Maven or Gradle build tooling.
-- Familiarity with creating server plugins.
+- Java 17 or later.
+- Maven 3.8+ build tooling.
+- A server plugin project (Bukkit/Spigot/Paper).
 
 ## Installation
 
-Add EzFramework as a dependency in your build. Example Maven coordinate (adjust `groupId`/`artifactId`/`version` to match your distribution):
+### JitPack (recommended)
+
+Add the JitPack repository and the modules you need to your `pom.xml`:
 
 ```xml
-<dependency>
-  <groupId>com.skyblockexp</groupId>
-  <artifactId>ezframework</artifactId>
-  <version>1.0.0</version>
-</dependency>
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+
+<dependencies>
+    <!-- Core Bukkit integration -->
+    <dependency>
+        <groupId>com.github.ez-plugins.EzFramework</groupId>
+        <artifactId>ezframework-core</artifactId>
+        <version>0.3.0</version>
+    </dependency>
+
+    <!-- Optional: MySQL storage -->
+    <dependency>
+        <groupId>com.github.ez-plugins.EzFramework</groupId>
+        <artifactId>storage-mysql</artifactId>
+        <version>0.3.0</version>
+    </dependency>
+
+    <!-- Optional: MiniMessage formatting -->
+    <dependency>
+        <groupId>com.github.ez-plugins.EzFramework</groupId>
+        <artifactId>message-minimessage</artifactId>
+        <version>0.3.0</version>
+    </dependency>
+</dependencies>
 ```
 
-Or the equivalent Gradle entry:
+### Local build
 
-```groovy
-implementation 'com.skyblockexp:ezframework:1.0.0'
+Clone and install to your local Maven repository:
+
+```bash
+git clone https://github.com/ez-plugins/EzFramework.git
+cd EzFramework
+mvn install -P proxy   # -P proxy also builds Velocity & BungeeCord modules
 ```
 
-## Minimal Plugin Example
+## Minimal Plugin
 
-Create a main plugin class that integrates with EzFramework's lifecycle.
+Extend `EzPlugin` and implement `components()`. The `onEnable()` and `onDisable()` methods are
+`final` — put all startup and shutdown logic inside `Component` implementations:
 
 ```java
 package com.example.myplugin;
 
 import com.skyblockexp.ezframework.EzPlugin;
+import com.skyblockexp.ezframework.Registry;
+import com.skyblockexp.ezframework.bootstrap.Component;
+
+import java.util.List;
 
 public class MyPlugin extends EzPlugin {
+
     @Override
-    public void onEnable() {
-        // Typical initialization occurs in bootstrap components
+    protected List<Component> components() {
+        return List.of(
+            new Component() {
+                @Override
+                public void start() throws Exception {
+                    // Register services and call initAll() to trigger init() on Managers
+                    Registry.forPlugin(MyPlugin.this).register("economy", new MyEconomyService());
+                    Registry.forPlugin(MyPlugin.this).initAll();
+                }
+
+                @Override
+                public void stop() throws Exception {
+                    Registry.forPlugin(MyPlugin.this).shutdownAll();
+                }
+            }
+        );
     }
 }
 ```
 
-### Registering Components
+## Registering Services
 
-Use the framework's bootstrap components to register managers and providers. A common pattern is to create a bootstrap `Component` implementation to register your `Manager` instances with the `Registry`.
-
-Example sketch:
+Access the per-plugin `Registry` anywhere via `Registry.forPlugin(plugin)`:
 
 ```java
-public class MyBootstrap implements Component {
-    @Override
-    public void bootstrap(Bootstrap bootstrap) {
-        bootstrap.getRegistry().register(new MyManager());
-        bootstrap.getRegistry().register(new MyStorageProvider());
-    }
-}
+// register by string key
+registry.register("economy", economyService);
+
+// register by class (uses fully-qualified class name as key)
+registry.register(EconomyService.class, economyService);
+
+// retrieve
+EconomyService svc = registry.get(EconomyService.class);
 ```
 
-## Commands
+Implement `Manager` to opt into automatic lifecycle calls (called by `initAll()` / `shutdownAll()`):
 
-EzFramework provides `EzCmd` and `Subcommand` utilities to define command trees and execution handlers. See the command docs for detailed API and examples.
-
-Files: [command/ez_cmd.md](command/ez_cmd.md), [command/subcommand.md](command/subcommand.md)
-
-## Messaging
-
-The framework includes a messaging API and provider abstraction. Use the `MessageProvider` interface to create or swap message backends (mini-message, custom providers). See the messaging docs for formatting and color codes.
-
-Files: [message/mini_message.md](message/mini_message.md), [message/color_codes.md](message/color_codes.md)
+```java
+public class MyEconomyService implements Manager {
+    @Override public void init() { /* open DB connection, etc. */ }
+    @Override public void shutdown() { /* close resources */ }
+}
+```
 
 ## Storage
 
-Use `StorageProvider` implementations to persist data. An example YAML provider is included with the framework; implement `StorageProvider` or extend `AbstractRepository` to create custom persistence layers.
+Use `StorageRegistry` to register a provider globally and `AbstractRepository` to build typed
+repositories:
 
-File: [storage/storage_provider.md](storage/storage_provider.md)
+```java
+// Register a named provider (e.g. in your start component)
+StorageRegistry.register(new MysqlStorageProvider(dataSource));
+
+// A typed repository keyed by player UUID
+public class PlayerRepo extends AbstractRepository<PlayerData, String> {
+    public PlayerRepo(StorageProvider provider) { super(provider, "players"); }
+
+    @Override
+    protected PlayerData fromMap(String id, Map<String, Object> data) {
+        return new PlayerData(id, (Integer) data.getOrDefault("coins", 0));
+    }
+}
+```
+
+See [storage/storage_provider.md](storage/storage_provider.md) and [storage/models.md](storage/models.md)
+for the full storage API.
+
+## Commands
+
+Extend `EzCmd` and add `Subcommand` instances:
+
+```java
+public class EconomyCommand extends EzCmd {
+    public EconomyCommand() {
+        super("economy");
+        addSubcommand(new BalanceSubcommand());
+    }
+}
+```
+
+See [command/ez_cmd.md](command/ez_cmd.md) for the full command API.
+
+## Messaging
+
+Use `Messaging.forPlugin(plugin)` to format and send messages:
+
+```java
+String formatted = Messaging.forPlugin(this).format("<gold>Hello, <name>!",
+    Map.of("name", sender.getName()));
+sender.sendMessage(formatted);
+```
+
+See [message/mini_message.md](message/mini_message.md) for format tags and configuration.
 
 ## Build & Run
 
-- Build with Maven: `mvn clean package`.
-- Place the resulting plugin JAR into your server's `plugins` folder and start the server.
+```bash
+mvn clean package
+# Copy target/myplugin-*.jar to your server's plugins/ folder and start the server.
+```
 
 ## Next Steps
 
-1. Read [system/bootstrap.md](system/bootstrap.md) to understand lifecycle and initialization.
-2. Read the command and storage guides to register managers and create usable APIs.
-
----
-
-If you'd like, I can now draft `command/ez_cmd.md` with API examples and code snippets. Proceed?
+- [system/bootstrap.md](system/bootstrap.md) — bootstrap ordering and component patterns.
+- [system/registry.md](system/registry.md) — registry patterns and typed access.
+- [storage/schema.md](storage/schema.md) — database migrations.
+- [proxy/overview.md](proxy/overview.md) — cross-server messaging.
+- [gui/README.md](gui/README.md) — inventory GUI.
