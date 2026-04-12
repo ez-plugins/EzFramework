@@ -9,8 +9,16 @@ com.skyblockexp.ezframework.config.impl
 com.skyblockexp.ezframework.config.migration
 com.skyblockexp.ezframework.gui.api
 com.skyblockexp.ezframework.gui.impl
+com.skyblockexp.ezframework.loader
 com.skyblockexp.ezframework.message.api
 com.skyblockexp.ezframework.message.minimessage
+com.skyblockexp.ezframework.module
+com.skyblockexp.ezframework.plugin.config
+com.skyblockexp.ezframework.plugin.module
+com.skyblockexp.ezframework.plugin.platform
+com.skyblockexp.ezframework.plugin.spi
+com.skyblockexp.ezframework.proxy
+com.skyblockexp.ezframework.proxy.event
 com.skyblockexp.ezframework.query
 com.skyblockexp.ezframework.storage
 com.skyblockexp.ezframework.storage.migration
