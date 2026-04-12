@@ -11,7 +11,7 @@ EzFramework ships an event bus for the proxy layer (`ezframework-api`, package `
 Key classes:
 
 | Class / type | Role |
-|---|---|
+| --- | --- |
 | `ProxyPacketEvent` | Base interface all custom packet events implement |
 | `@PacketListener` | Method annotation that marks a handler |
 | `EventPriority` | Enum controlling handler invocation order |
@@ -83,7 +83,7 @@ public class MyProxyListener {
 ### Priority table
 
 | Priority | Fires | Typical use |
-|---|---|---|
+| --- | --- | --- |
 | `LOWEST` | First | Early read / soft-cancel |
 | `LOW` | 2nd | Low-priority mutations |
 | `NORMAL` | 3rd (default) | Main business logic |

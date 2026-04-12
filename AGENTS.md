@@ -62,6 +62,7 @@ When writing tests that exercise these registries, always apply the strategy abo
 - Prefer examples over long prose: include short, copy-pastable snippets where appropriate.
 - Use consistent Markdown conventions: fenced code blocks with language, single trailing newline, no hard tabs.
 - When documenting public APIs or breaking changes, include migration notes and examples.
+- After any documentation change, run `npx -y markdownlint-cli2 "docs/**/*.md"` to catch style errors before committing.
 
 ## Commit and CI
 - Run `mvn clean install -P proxy` locally before committing. If fixes are automatic (formatters, linters), include those changes in the same commit as the code they fix.
