@@ -1,7 +1,5 @@
 package com.skyblockexp.ezframework.storage;
 
-import org.bukkit.plugin.java.JavaPlugin;
-
 import java.util.Map;
 import java.util.Optional;
 
@@ -9,6 +7,11 @@ import java.util.Optional;
  * Abstraction for storage backends (YML files, MySQL, SQLite, etc.).
  * Implementations provide simple key-based load/save/delete semantics where
  * the framework and repositories map domain IDs to storage paths.
+ *
+ * <p>The {@link #init(Object)} parameter is typed as {@link Object} so this
+ * interface can be implemented for any server platform without a platform
+ * dependency in the API module. Implementations should cast to their expected
+ * platform plugin type (e.g. {@code JavaPlugin}, {@code PluginContainer}).
  */
 public interface StorageProvider {
     /**
@@ -21,10 +24,10 @@ public interface StorageProvider {
     /**
      * Initialize the provider with the host plugin. Called once during startup.
      *
-     * @param plugin hosting plugin instance
+     * @param plugin hosting plugin instance (platform-specific; cast as needed)
      * @throws Exception on initialization failure
      */
-    void init(JavaPlugin plugin) throws Exception;
+    void init(Object plugin) throws Exception;
 
     /**
      * Close / cleanup the provider (release connections, flush caches).

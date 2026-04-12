@@ -42,7 +42,7 @@ public class MigrationManagerTest {
         final List<List<String>> executed = new ArrayList<>();
 
         @Override public String name() { return "rec"; }
-        @Override public void init(org.bukkit.plugin.java.JavaPlugin plugin) {}
+        @Override public void init(Object plugin) {}
         @Override public void close() {}
         @Override public void save(String path, java.util.Map<String, Object> data) {}
         @Override public Optional<java.util.Map<String, Object>> load(String path) { return Optional.empty(); }
@@ -59,7 +59,7 @@ public class MigrationManagerTest {
         final List<List<String>> executed = new ArrayList<>();
 
         @Override public String name() { return "jdbcprov"; }
-        @Override public void init(org.bukkit.plugin.java.JavaPlugin plugin) {}
+        @Override public void init(Object plugin) {}
         @Override public void close() {}
         @Override public void save(String path, java.util.Map<String, Object> data) {}
         @Override public Optional<java.util.Map<String, Object>> load(String path) { return Optional.empty(); }

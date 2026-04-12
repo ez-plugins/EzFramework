@@ -23,7 +23,7 @@ public class EzModelTest {
         public String name() { return "in-memory"; }
 
         @Override
-        public void init(org.bukkit.plugin.java.JavaPlugin plugin) { }
+        public void init(Object plugin) { }
 
         @Override
         public void close() { }

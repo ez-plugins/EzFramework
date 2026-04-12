@@ -1,7 +1,5 @@
 package com.skyblockexp.ezframework;
 
-import org.bukkit.plugin.java.JavaPlugin;
-
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Objects;
@@ -11,17 +9,19 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Per-plugin registry for storing managers and shared objects.
  *
- * Use {@link #forPlugin(JavaPlugin)} to obtain the registry for a specific
- * plugin instance. This avoids cross-plugin collisions when multiple plugins
- * on the same JVM use EzFramework.
+ * <p>Use {@link #forPlugin(Object)} to obtain the registry for a specific
+ * plugin instance. The key is typed as {@link Object} so this class works
+ * with any server platform (Bukkit {@code JavaPlugin}, Velocity
+ * {@code PluginContainer}, BungeeCord {@code Plugin}, etc.). This avoids
+ * cross-plugin collisions when multiple plugins on the same JVM use EzFramework.
  */
 public final class Registry {
-    private static final Map<JavaPlugin, Registry> INSTANCES = new ConcurrentHashMap<>();
+    private static final Map<Object, Registry> INSTANCES = new ConcurrentHashMap<>();
 
-    private final JavaPlugin plugin;
+    private final Object plugin;
     private final Map<String, Object> managers = new ConcurrentHashMap<>();
 
-    private Registry(JavaPlugin plugin) {
+    private Registry(Object plugin) {
         this.plugin = Objects.requireNonNull(plugin, "plugin");
     }
 
@@ -31,16 +31,16 @@ public final class Registry {
      * @param plugin plugin instance to obtain the registry for
      * @return registry instance for the given plugin
      */
-    public static Registry forPlugin(JavaPlugin plugin) {
+    public static Registry forPlugin(Object plugin) {
         return INSTANCES.computeIfAbsent(plugin, Registry::new);
     }
 
     /**
-     * Obtain the Bukkit plugin instance backing this registry.
+     * Obtain the plugin instance backing this registry.
      *
-     * @return the associated {@link JavaPlugin}
+     * @return the associated plugin (platform-specific type)
      */
-    public JavaPlugin getPlugin() {
+    public Object getPlugin() {
         return plugin;
     }
 

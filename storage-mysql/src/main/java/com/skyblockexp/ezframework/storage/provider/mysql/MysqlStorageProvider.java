@@ -46,7 +46,7 @@ public class MysqlStorageProvider implements StorageProvider, MigrationCapable, 
 
     /**
      * Public no-arg constructor. The provider will read connection parameters
-     * from the plugin config when {@link #init(org.bukkit.plugin.java.JavaPlugin)} is called.
+     * from the plugin config when {@link #init(Object)} is called.
      */
     public MysqlStorageProvider() {}
 
@@ -160,17 +160,18 @@ public class MysqlStorageProvider implements StorageProvider, MigrationCapable, 
     }
 
     @Override
-    public void init(JavaPlugin plugin) throws Exception {
-        this.plugin = plugin;
+    public void init(Object plugin) throws Exception {
+        JavaPlugin jp = (JavaPlugin) plugin;
+        this.plugin = jp;
         // If a Connection was provided via constructor, reuse it. Otherwise
         // build connection parameters from programmatic overrides or plugin
         // config values (overrides win).
         if (this.conn == null) {
-            String host = (hostOverride != null) ? hostOverride : plugin.getConfig().getString("mysql.host", "localhost");
-            int port = (portOverride != null) ? portOverride : plugin.getConfig().getInt("mysql.port", 3306);
-            String database = (databaseOverride != null) ? databaseOverride : plugin.getConfig().getString("mysql.database", "");
-            String user = (userOverride != null) ? userOverride : plugin.getConfig().getString("mysql.user", "");
-            String password = (passwordOverride != null) ? passwordOverride : plugin.getConfig().getString("mysql.password", "");
+            String host = (hostOverride != null) ? hostOverride : jp.getConfig().getString("mysql.host", "localhost");
+            int port = (portOverride != null) ? portOverride : jp.getConfig().getInt("mysql.port", 3306);
+            String database = (databaseOverride != null) ? databaseOverride : jp.getConfig().getString("mysql.database", "");
+            String user = (userOverride != null) ? userOverride : jp.getConfig().getString("mysql.user", "");
+            String password = (passwordOverride != null) ? passwordOverride : jp.getConfig().getString("mysql.password", "");
 
             if (database == null || database.isEmpty() || user == null || user.isEmpty()) {
                 throw new IllegalStateException("mysql.database and mysql.user must be set either via config or programmatic setters");

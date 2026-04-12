@@ -35,11 +35,12 @@ public class YamlStorageProvider implements StorageProvider, QueryableStorage {
     }
 
     @Override
-    public void init(JavaPlugin plugin) throws Exception {
-        this.plugin = plugin;
-        this.baseDir = new File(plugin.getDataFolder(), "storage");
+    public void init(Object plugin) throws Exception {
+        JavaPlugin jp = (JavaPlugin) plugin;
+        this.plugin = jp;
+        this.baseDir = new File(jp.getDataFolder(), "storage");
         if (!baseDir.exists() && !baseDir.mkdirs()) {
-            plugin.getLogger().log(Level.WARNING, "Could not create storage directory: " + baseDir.getAbsolutePath());
+            jp.getLogger().log(Level.WARNING, "Could not create storage directory: " + baseDir.getAbsolutePath());
         }
     }
 

@@ -1,5 +1,5 @@
 name: ezframework
 main: com.skyblockexp.ezframework.proxy.bungee.BungeeBootstrap
-version: 0.2.2
+version: 0.3.0
 author: ez-plugins
 description: Cross-server messaging layer for EzFramework plugins (BungeeCord)

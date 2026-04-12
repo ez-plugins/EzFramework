@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 @Plugin(
         id = "ezframework",
         name = "EzFramework",
-        version = "0.2.2",
+        version = "0.3.0",
         description = "Cross-server messaging layer for EzFramework plugins",
         authors = {"ez-plugins"}
 )

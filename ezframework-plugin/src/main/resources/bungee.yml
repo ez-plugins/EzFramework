@@ -1,0 +1,8 @@
+name: EzFramework
+main: com.skyblockexp.ezframework.plugin.platform.BungeeManagerPlugin
+version: 0.3.0
+author: ez-plugins
+description: >
+  EzFramework runtime module manager for BungeeCord.
+  Downloads and initialises EzFramework module JARs declared
+  in plugin ezframework.yml descriptors.
